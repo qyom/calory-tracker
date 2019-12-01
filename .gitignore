@@ -2,6 +2,7 @@ vendor/
 node_modules/
 npm-debug.log
 storage-db/
+meals.code-workspace
 
 # Laravel 4 specific
 bootstrap/compiled.php

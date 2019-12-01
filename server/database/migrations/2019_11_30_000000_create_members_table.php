@@ -14,7 +14,9 @@ class CreateMembersTable extends Migration
     public function up()
     {
         Schema::create('members', function (Blueprint $table) {
-            $table->increments('member_id');
+            $table->increments('member_id');            
+            $table->enum('role_type', ['REGULAR','MANAGER','ADMIN'])->default('REGULAR');
+            $table->unsignedInteger('creator_id')->nullable();
             $table->string('email')->unique();
             $table->string('password');
 
@@ -24,6 +26,8 @@ class CreateMembersTable extends Migration
             //$table->timestamp('email_verified_at')->nullable();            
             //$table->rememberToken();
             $table->timestamps();
+            // cascade delete children when deleting parent
+            $table->foreign('creator_id')->references('member_id')->on('members')->onDelete('SET NULL');
         });
     }
 

@@ -10,6 +10,13 @@ class Member extends Authenticatable implements JWTSubject
 {
     use Notifiable;
 
+    const TYPE_REGULAR = 'REGULAR';
+    const TYPE_MANAGER = 'MANAGER';
+    const TYPE_ADMIN = 'ADMIN';
+
+
+    protected $primaryKey = 'member_id';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -25,8 +32,13 @@ class Member extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
     ];
+
+    protected $attributes = array(
+        'role_type' => self::TYPE_REGULAR
+    );
+      
 
     public function getJWTIdentifier()
     {
