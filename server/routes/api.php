@@ -17,7 +17,7 @@ use Illuminate\Http\Request;
 //     return $request->user();
 // });
 
-Route::post('member', 'MemberController@register');
+Route::post('member', 'MemberController@post');
 Route::post('auth', 'AuthController@post');
 Route::get('open', 'SomeController@open');
 
