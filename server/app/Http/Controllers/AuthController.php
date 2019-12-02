@@ -13,22 +13,20 @@ class AuthController extends Controller
 {
     public function get()
     {
-        return response()->json(resolve('currentMember'));
+        return response()->json(JWTAuth::user());
     }
 
     public function post(Request $request)
     {
         $credentials = $request->only('email', 'password');
-
         try {
             if (! $token = JWTAuth::attempt($credentials)) {
                 return response()->json(['error' => 'invalid_credentials'], 401);
             }
-            $member = JWTAuth::user();
         } catch (JWTException $e) {
             return response()->json(['error' => 'could_not_create_token'], 500);
         }
-
+        $member = JWTAuth::user();
         return response()->json(compact('token', 'member'));
     }
 }

@@ -143,6 +143,8 @@ class MemberTest extends TestCase
 
     public function testInvalidPutInput()
     {
+        unset($this->validPayload['password']);
+        unset($this->validPayload['password_confirmation']);
         // Create a regular member
         $member = factory(Member::class)->create([
             'email' => 'toptal@test.com',
@@ -195,19 +197,13 @@ class MemberTest extends TestCase
             ] + $this->validPayload
         )->assertStatus(400)->assertJsonStructure(['email']);
         
-        // Mismatching password_confirmation field
+        // Sending a password with missmatching password_confirmation field
         $this->withTokenHeader($tokenRegular)->json(
             'put',
             '/api/member',
-            ['password_confirmation'=>'toptaltes'] + $this->validPayload
+            ['password'=>'toptaltest'] + $this->validPayload
         )->assertStatus(400)->assertJsonStructure(['password']);
         
-        // Mismatching password field
-        $this->withTokenHeader($tokenRegular)->json(
-            'put',
-            '/api/member',
-            ['password'=>'optaltest'] + $this->validPayload
-        )->assertStatus(400)->assertJsonStructure(['password']);
         // invalid calories
         $this->withTokenHeader($tokenRegular)->json(
             'put',
@@ -217,13 +213,82 @@ class MemberTest extends TestCase
         // Duplicate email entries
         $member = factory(Member::class)->create([
             'email' => $this->validPayload['email'],
-            'password' => bcrypt($this->validPayload['password']),
+            'password' => bcrypt('toptaltest'),
         ]);
         $this->withTokenHeader($tokenRegular)->json(
             'put',
             '/api/member',
             $this->validPayload
         )->assertStatus(400)->assertJsonStructure(['email']);
+    }
+
+    public function testPutValidInput()
+    {
+        // Create a regular member
+        $memberAdmin = factory(Member::class)->create([
+            'email' => 'toptal@test.com',
+            'role_type' => Member::TYPE_ADMIN,
+            'password' => bcrypt('toptaltest'),
+        ]);
+        $token = JWTAuth::fromUser($memberAdmin);
+
+        // Update self without password
+        $this->withTokenHeader($token)->json(
+            'put',
+            '/api/member',
+            $this->validPayload
+        )->assertStatus(200);
+
+        // Update self with password
+        $this->withTokenHeader($token)->json(
+            'put',
+            '/api/member',
+            [
+                'password' => 'toptaltest',
+                'password_confirmation' => 'toptaltest'
+            ] + $this->validPayload
+        )->assertStatus(200);
+
+        // Update manager
+        $memberManager = factory(Member::class) -> create([
+            'email' => 'toptal@test2.com',
+            'role_type' => Member::TYPE_MANAGER,
+            'password' => bcrypt('toptaltest')
+        ]);
+        $this->withTokenHeader($token)->json(
+            'put',
+            '/api/member/'.$memberManager->member_id,
+            [
+                'first_name' => 'whatver dude'
+            ]
+        )->assertStatus(200);
+        // Update regular
+        $memberRegular = factory(Member::class) -> create([
+            'email' => 'toptal@test3.com',
+            'role_type' => Member::TYPE_REGULAR,
+            'password' => bcrypt('toptaltest')
+        ]);
+        $this->withTokenHeader($token)->json(
+            'put',
+            '/api/member/'.$memberRegular->member_id,
+            [
+                'first_name' => 'whatver dudez'
+            ]
+        )->assertStatus(200);
+        
+        // Switch to manager
+        JWTAuth::fromUser($memberManager);
+        $token = $this->getToken();
+        $this->withTokenHeader($token)->json(
+            'put',
+            '/api/member/'.$memberRegular->member_id,
+            [
+                'first_name' => 'Another name'
+            ]
+        )->assertStatus(200);
+        $memberRegular->refresh();
+        $this->assertEquals('Another name', $memberRegular->first_name);
+
     }
 
     public function testPutAccess()

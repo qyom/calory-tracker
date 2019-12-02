@@ -13,6 +13,11 @@ class Member extends Authenticatable implements JWTSubject
     const TYPE_REGULAR = 'REGULAR';
     const TYPE_MANAGER = 'MANAGER';
     const TYPE_ADMIN = 'ADMIN';
+    public static $rolesMap = [
+        self::TYPE_REGULAR => 10,
+        self::TYPE_MANAGER => 20,
+        self::TYPE_ADMIN => 30,
+    ];
 
 
     protected $primaryKey = 'member_id';
@@ -47,5 +52,9 @@ class Member extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public static function compareRoles($role1, $role2) {
+        return self::$rolesMap[$role1] <=> self::$rolesMap[$role2];
     }
 }

@@ -21,7 +21,8 @@ Route::post('member', 'MemberController@post');
 Route::post('auth', 'AuthController@post');
 Route::get('open', 'SomeController@open');
 
-Route::group(['middleware' => ['jwt.verify']], function() {
+Route::group(['middleware' => ['jwt.verify:1']], function() {
     Route::get('auth', 'AuthController@get');
     Route::get('closed', 'SomeController@closed');
+    Route::put('member/{memberId?}', 'MemberController@put');
 });
