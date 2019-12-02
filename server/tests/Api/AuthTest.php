@@ -1,5 +1,5 @@
 <?php
-namespace Tests\Feature;
+namespace Tests\Api;
 
 use Tests\TestCase;
 use App\Member;

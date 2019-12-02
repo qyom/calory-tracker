@@ -16,4 +16,11 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
         Artisan::call('db:seed');
     }
+
+    protected function withTokenHeader($token)
+    {
+        return $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+        ]);
+    }
 }
