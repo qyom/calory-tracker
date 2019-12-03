@@ -13,16 +13,18 @@ use Illuminate\Http\Request;
 |
 */
 
-// Route::middleware('auth:api')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-
-Route::post('member', 'MemberController@post');
-Route::post('auth', 'AuthController@post');
-Route::get('open', 'SomeController@open');
+Route::group(['middleware' => ['jwt.verify:0']], function() {
+    Route::post('member', 'MemberController@post')->middleware('can:create,App\Member');
+    Route::post('auth', 'AuthController@post');
+    Route::get('open', 'SomeController@open');
+});
 
 Route::group(['middleware' => ['jwt.verify:1']], function() {
     Route::get('auth', 'AuthController@get');
     Route::get('closed', 'SomeController@closed');
-    Route::put('member/{memberId?}', 'MemberController@put');
+
+    Route::put('member/{member}', 'MemberController@put')->middleware('can:update,member');
+    Route::put('member', 'MemberController@put');
 });
+
+Route::model('member', App\Member::class);

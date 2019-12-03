@@ -28,7 +28,7 @@ class JwtMiddleware extends BaseMiddleware
         try {
             JWTAuth::parseToken()->authenticate();
         } catch (Exception $e) {
-            if (0 === $restrict) {
+            if (0 == $restrict) {
                 return $next($request);
             }
             if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException){

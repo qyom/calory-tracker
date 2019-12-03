@@ -12,10 +12,6 @@ class MemberController extends Controller
 {
     public function post(Request $request)
     {
-        //ACL
-        if (($member = JWTAuth::user()) && $member->role_type == Member::TYPE_REGULAR) {
-            return response()->json(['error' => 'unauthorized'], 403);
-        }
         $validator = Validator::make($request->all(), [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
@@ -38,32 +34,11 @@ class MemberController extends Controller
         return response()->json(compact('member','token'),201);
     }
 
-    public function put(Request $request, $memberIdPut = null)
+    public function put(Request $request, $memberPut = null)
     {
         $memberMe = JWTAuth::user();
-        if (!$memberIdPut) {
-            $memberIdPut = $memberMe->member_id;
-        }
-        if ($memberIdPut !== $memberMe->member_id) {
-            $memberPut = Member::find($memberIdPut);
-        } else {
-            $memberPut = $memberMe;
-        }
-
         if (!$memberPut) {
-            return response()->json(['error' => 'invalid_member_id'], 404);
-        }
-        
-        // ACL
-        if (
-            $memberMe->member_id != $memberPut->member_id
-            && (
-                (Member::compareRoles($memberMe->role_type, Member::TYPE_REGULAR) === 0)
-                ||
-                (Member::compareRoles($memberMe->role_type, $memberPut->role_type) < 0)
-            )
-        ) {
-            return response()->json(['error' => 'unauthorized'], 403);
+            $memberPut = $memberMe;
         }
         $validator = Validator::make($request->all(), [
             'first_name' => '|string|max:255',
