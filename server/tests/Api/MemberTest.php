@@ -279,8 +279,7 @@ class MemberTest extends TestCase
         )->assertStatus(200);
         
         // Switch to manager
-        JWTAuth::fromUser($memberManager);
-        $token = $this->getToken();
+        $token = $this->login($memberManager);
         $this->withTokenHeader($token)->json(
             'PUT',
             '/api/member/'.$memberRegular->member_id,
@@ -328,7 +327,7 @@ class MemberTest extends TestCase
         $currentMember->role_type = Member::TYPE_MANAGER;
         $currentMember->save();
         // Refresh token
-        $token = $this->getToken();
+        $token = $this->login($currentMember);
         // Retry even with an old member token
         $response = $this->withTokenHeader($token)->json(
             'put',
@@ -343,7 +342,7 @@ class MemberTest extends TestCase
         $currentMember->role_type = Member::TYPE_MANAGER;
         $currentMember->save();
         // Refresh token
-        $token = $this->getToken();
+        $token = $this->login($currentMember);
         // Retry even with an old member token
         $this->withTokenHeader($token)->json(
             'put',
@@ -358,8 +357,8 @@ class MemberTest extends TestCase
     {
         $m = $this->createMember();
         // Unauthenticated delete call
-        $this->json('delete', '/api/member')->assertStatus(401);
-        $this->json('delete', '/api/member/'.$m->member_id)->assertStatus(401);
+        $this->json('delete', 'api/member')->assertStatus(401);
+        $this->json('delete', 'api/member/'.$m->member_id)->assertStatus(401);
     }
     public function testSelfDelete()
     {
@@ -374,20 +373,16 @@ class MemberTest extends TestCase
         }catch (ModelNotFoundException $e) {
             // Expected
         }        
-        // /api/member/{self.id}
-        $m2 = $this->createMember();
-        JWTAuth::fromUser($m2);
-        $token = $this->getToken();
-        var_dump($m2->toArray());
-        $this->withTokenHeader($token)->json('get', '/api/auth')->dump();
-        $this->withTokenHeader($token)->json('delete', '/api/member/'.$m2->member_id)->assertStatus(200);
+        // api/member/{self.id}
+        $m = $this->createMember();
+        $token = $this->login($m);
+        $this->withTokenHeader($token)->json('delete', '/api/member/'.$m->member_id)->assertStatus(200);
         try{
-            $m2->refresh();
+            $m->refresh();
             $this->fail("Member was not deleted");
         } catch (ModelNotFoundException $e) {
             // Expected
-        }
-        
+        }        
     }
 
     public function testDeleteById()
@@ -400,8 +395,8 @@ class MemberTest extends TestCase
         // regular can't delete anybody else
         $this->withTokenHeader($token)->json('DELETE', '/api/member/'.$manager->member_id)->assertStatus(403);
         
-        $token = JWTAuth::fromUser($manager);
-        $token = $this->getToken();
+        //$token = JWTAuth::fromUser($manager);
+        $token = $this->login($manager);
         $this->withTokenHeader($token)->json('DELETE', '/api/member/'.$regular->member_id)->assertStatus(200);
         try {
             $regular->refresh();
@@ -415,5 +410,72 @@ class MemberTest extends TestCase
             $this->fail("Manager was deleted by mistake");
         }
         $this->assertEquals(1, Member::count());
+    }
+
+    public function testGetMember()
+    {
+        // No token no coke
+        $this->json('GET', 'api/member')->assertStatus(401);
+        $this->json('GET', 'api/member/1')->assertStatus(404);
+
+        $regular = $this->createMember();
+        $token = JWTAuth::fromUser($regular);
+        // get self
+        $this->withTokenHeader($token)
+            ->json('GET','api/member')
+            ->assertStatus(200)
+            ->assertJsonFragment(['member_id'=>$regular->member_id]);
+        // get self by id
+        $this->withTokenHeader($token)
+            ->json('GET','api/member/'.$regular->member_id)
+            ->assertStatus(200)
+            ->assertJsonFragment(['member_id'=>$regular->member_id]);
+        // cant get non existing
+        $this->withTokenHeader($token)
+            ->json('GET','api/member/2')
+            ->assertStatus(404);
+
+        $regular2 = $this->createMember(Member::TYPE_MANAGER);
+        $manager = $this->createMember(Member::TYPE_MANAGER);
+        // regular cant get another regular
+        $this->withTokenHeader($token)
+            ->json('GET','api/member/'.$regular2->member_id)
+            ->assertStatus(403);
+        // regular cant get manager
+        $this->withTokenHeader($token)
+            ->json('GET','api/member/'.$manager->member_id)
+            ->assertStatus(403);
+
+        //$token = JWTAuth::fromUser($manager);
+        $token = $this->login($manager);
+        // Manager can get regular
+        $this->withTokenHeader($token)
+            ->json('GET', 'api/member/'.$regular2->member_id)
+            ->assertStatus(200)
+            ->assertJsonFragment(['member_id'=>$regular2->member_id, 'email'=>$regular2->email]);    
+            
+        $manager2 = $this->createMember(Member::TYPE_MANAGER);
+        // Manager can get another manager
+        $this->withTokenHeader($token)
+            ->json('GET', 'api/member/'.$manager2->member_id)
+            ->assertStatus(200)
+            ->assertJsonFragment(['member_id'=>$manager2->member_id, 'email'=>$manager2->email]);
+        $admin = $this->createMember(Member::TYPE_ADMIN);
+        // Manager cant get admin
+        $this->withTokenHeader($token)
+            ->json('GET', '/api/member/'.$admin->member_id)
+            ->assertStatus(403);
+        
+        $token = $this->login($admin);
+        // admin can get manager
+        $this->withTokenHeader($token)
+            ->json('GET', '/api/member/'.$manager2->member_id)
+            ->assertStatus(200);
+        // Admin can get regular2
+        $this->withTokenHeader($token)->json('GET','api/member/'.$regular2->member_id)->assertStatus(200);
+
+        $admin2 = $this->createMember(Member::TYPE_ADMIN);
+        $this->withTokenHeader($token)->json('GET', '/api/member/'.$admin2->member_id)->assertStatus(200)
+            ->assertJsonFragment(['member_id'=>$admin2->member_id]);
     }
 }

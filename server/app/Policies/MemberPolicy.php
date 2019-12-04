@@ -21,6 +21,24 @@ class MemberPolicy
     }
 
     /**
+     * Determine whether the user can view/get a member
+     *
+     * @param  \App\Member  $mSelf
+     * @param  \App\Member  $mGet
+     * @return mixed
+     */
+    public function get(Member $mSelf, Member $mGet)
+    {
+        return 
+            $mSelf->member_id == $mGet->member_id // viewing self
+            || (
+                // Not a regular self updates someone with equal or weaker role type
+                (Member::compareRoles($mSelf->role_type, Member::TYPE_REGULAR) === 1) &&
+                (Member::compareRoles($mSelf->role_type, $mGet->role_type) >= 0)
+            );
+    }
+
+    /**
      * Determine whether the user can update a member
      *
      * @param  \App\Member  $mSelf
