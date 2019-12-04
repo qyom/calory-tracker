@@ -34,6 +34,10 @@ Route::group(['middleware' => ['jwt.verify:1']], function() {
 
     Route::get('members', 'MembersController@get')->middleware('can:view-many,App\Member');
 
+    #MEALS
+    Route::get('meal/{meal}', 'MealController@get')->middleware('can:view,meal');
+
 });
 
 Route::model('member', App\Member::class);
+Route::model('meal', App\Meal::class);

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Gate;
 
 use App\Member;
 use App\Policies\MemberPolicy;
+use App\Policies\MealPolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -17,6 +18,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         Member::class => MemberPolicy::class,
+        Meal::class => MealPolicy::class,
     ];
 
     /**

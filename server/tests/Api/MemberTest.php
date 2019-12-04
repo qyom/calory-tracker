@@ -416,7 +416,7 @@ class MemberTest extends TestCase
     {
         // No token no coke
         $this->json('GET', 'api/member')->assertStatus(401);
-        $this->json('GET', 'api/member/1')->assertStatus(404);
+        $this->json('GET', 'api/member/1')->assertStatus(401);
 
         $regular = $this->createMember();
         $token = JWTAuth::fromUser($regular);

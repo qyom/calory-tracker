@@ -43,6 +43,14 @@ class Member extends Authenticatable implements JWTSubject
     protected $attributes = array(
         'role_type' => self::TYPE_REGULAR
     );
+
+    /**
+     * Get the meals of the member
+     */
+    public function meals()
+    {
+        return $this->hasMany('App\Meal', 'member_id');
+    }
       
 
     public function getJWTIdentifier()
