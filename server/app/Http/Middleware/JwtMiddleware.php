@@ -27,6 +27,9 @@ class JwtMiddleware extends BaseMiddleware
         }
         try {
             JWTAuth::parseToken()->authenticate();
+            if (null === JWTAuth::user() && $restrict!=0) {
+                return response()->json(['error' => 'Token is valid but the member was removed'], 401);
+            }
         } catch (Exception $e) {
             if (0 == $restrict) {
                 return $next($request);

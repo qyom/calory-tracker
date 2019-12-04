@@ -5,6 +5,8 @@ namespace Tests\Api;
 use Tests\TestCase;
 use App\Member;
 use JWTAuth;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+
 class MemberTest extends TestCase
 {
     protected $validPayload = [
@@ -280,7 +282,7 @@ class MemberTest extends TestCase
         JWTAuth::fromUser($memberManager);
         $token = $this->getToken();
         $this->withTokenHeader($token)->json(
-            'put',
+            'PUT',
             '/api/member/'.$memberRegular->member_id,
             [
                 'first_name' => 'Another name'
@@ -352,9 +354,66 @@ class MemberTest extends TestCase
         $this->assertEquals('changedByAdmin', $memberToUpdate->first_name);         
     }
 
-    protected function getToken()
+    public function testDeleteIsAuthenticated()
     {
-        JWTAuth::parseToken()->authenticate();
-        return JWTAuth::getToken();
+        $m = $this->createMember();
+        // Unauthenticated delete call
+        $this->json('delete', '/api/member')->assertStatus(401);
+        $this->json('delete', '/api/member/'.$m->member_id)->assertStatus(401);
+    }
+    public function testSelfDelete()
+    {
+        // /api/member
+        $m = $this->createMember();
+        $token = JWTAuth::fromUser($m);
+        // Can delete self
+        $this->withTokenHeader($token)->json('delete', '/api/member')->assertStatus(200);
+        try{
+            $m->refresh();
+            $this->fail("Member was not deleted");
+        }catch (ModelNotFoundException $e) {
+            // Expected
+        }        
+        // /api/member/{self.id}
+        $m2 = $this->createMember();
+        JWTAuth::fromUser($m2);
+        $token = $this->getToken();
+        var_dump($m2->toArray());
+        $this->withTokenHeader($token)->json('get', '/api/auth')->dump();
+        $this->withTokenHeader($token)->json('delete', '/api/member/'.$m2->member_id)->assertStatus(200);
+        try{
+            $m2->refresh();
+            $this->fail("Member was not deleted");
+        } catch (ModelNotFoundException $e) {
+            // Expected
+        }
+        
+    }
+
+    public function testDeleteById()
+    {
+        $regular = $this->createMember();
+        $token = JWTAuth::fromUser($regular);
+        // Non existing member
+        $this->withTokenHeader($token)->json('DELETE', '/api/member/'.($regular->member_id+10))->assertStatus(404);
+        $manager = $this->createMember(Member::TYPE_MANAGER);
+        // regular can't delete anybody else
+        $this->withTokenHeader($token)->json('DELETE', '/api/member/'.$manager->member_id)->assertStatus(403);
+        
+        $token = JWTAuth::fromUser($manager);
+        $token = $this->getToken();
+        $this->withTokenHeader($token)->json('DELETE', '/api/member/'.$regular->member_id)->assertStatus(200);
+        try {
+            $regular->refresh();
+            $this->fail("Member was not deleted");
+        } catch(ModelNotFoundException $e) {
+            // Expected
+        }
+        try{
+            $manager->refresh();
+        }catch (ModelNotFoundException $e) {
+            $this->fail("Manager was deleted by mistake");
+        }
+        $this->assertEquals(1, Member::count());
     }
 }

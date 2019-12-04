@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -25,6 +24,9 @@ Route::group(['middleware' => ['jwt.verify:1']], function() {
 
     Route::put('member/{member}', 'MemberController@put')->middleware('can:update,member');
     Route::put('member', 'MemberController@put');
+
+    Route::delete('member/{member}', 'MemberController@delete')->middleware('can:delete,member');
+    Route::delete('member', 'MemberController@delete');
 });
 
 Route::model('member', App\Member::class);
