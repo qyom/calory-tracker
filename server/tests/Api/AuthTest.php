@@ -57,25 +57,13 @@ class AuthTest extends TestCase
             ->assertStatus(200)
             ->assertJsonStructure(['member_id', 'email', 'first_name', 'last_name', 'max_calories_per_day','created_at','updated_at']);    
     }
-    // public function testMissingMember()
-    // {
-    //     $this->json('GET', 'api/auth')->assertStatus(401);
-    //     $m = $this->createMember();
-    //     $token = JWTAuth::fromUser($m);
-    //     $this->withTokenHeader($token)->json('GET', 'api/auth')->assertStatus(200)->dump();
-        
-    //     $this->assertEquals(1, Member::count());
-    //     echo "BEFORE: ", $token, "\n";
-    //     $m->forceDelete();
-    //     echo "AFTER: ", $token,"\n";
-    //     $this->assertEquals(0, Member::count());
-        
-    //     $this->withTokenHeader($token)->json('GET', 'api/auth')->assertStatus(403)->dump();
 
-    //     // $m2 = $this->createMember();
-    //     // JWTAuth::fromUser($m2);
-    //     // $token = $this->getToken();
-    //     // $this->withTokenHeader($token)->json('GET', 'api/auth')->assertStatus(200)->dump();
-    //     // $x=1;
-    // }
+    public function testLogout()
+    {
+        $m = $this->createMember();
+        $token = $this->login($m);
+        $this->withTokenHeader($token)->get('/api/auth')->assertStatus(200);
+        $this->withTokenHeader($token)->delete('/api/auth')->assertStatus(200);
+        $this->withTokenHeader($token)->get('/api/auth')->assertStatus(401);
+    }
 }

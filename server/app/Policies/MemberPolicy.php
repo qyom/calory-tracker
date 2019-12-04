@@ -21,13 +21,13 @@ class MemberPolicy
     }
 
     /**
-     * Determine whether the user can view/get a member
+     * Determine whether the user can view a member
      *
      * @param  \App\Member  $mSelf
      * @param  \App\Member  $mGet
      * @return mixed
      */
-    public function get(Member $mSelf, Member $mGet)
+    public function view(Member $mSelf, Member $mGet)
     {
         return 
             $mSelf->member_id == $mGet->member_id // viewing self
@@ -71,5 +71,10 @@ class MemberPolicy
                 (Member::compareRoles($mSelf->role_type, Member::TYPE_REGULAR) === 1) &&
                 (Member::compareRoles($mSelf->role_type, $mDelete->role_type) >= 0)
             );
+    }
+
+    public function viewMany(Member $mSelf)
+    {
+        return $mSelf->role_type!=Member::TYPE_REGULAR;
     }
 }

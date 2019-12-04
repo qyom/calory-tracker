@@ -29,4 +29,9 @@ class AuthController extends Controller
         $member = JWTAuth::user();
         return response()->json(compact('token', 'member'));
     }
+    public function delete()
+    {
+        auth()->logout();
+        return response()->json();
+    }
 }

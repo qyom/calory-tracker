@@ -20,9 +20,10 @@ Route::group(['middleware' => ['jwt.verify:0']], function() {
 
 Route::group(['middleware' => ['jwt.verify:1']], function() {
     Route::get('auth', 'AuthController@get');
+    Route::delete('auth', 'AuthController@delete');
     Route::get('closed', 'SomeController@closed');
 
-    Route::get('member/{member}', 'MemberController@get')->middleware('can:get,member');
+    Route::get('member/{member}', 'MemberController@get')->middleware('can:view,member');
     Route::get('member', 'MemberController@get');
 
     Route::put('member/{member}', 'MemberController@put')->middleware('can:update,member');
@@ -30,6 +31,9 @@ Route::group(['middleware' => ['jwt.verify:1']], function() {
 
     Route::delete('member/{member}', 'MemberController@delete')->middleware('can:delete,member');
     Route::delete('member', 'MemberController@delete');
+
+    Route::get('members', 'MembersController@get')->middleware('can:view-many,App\Member');
+
 });
 
 Route::model('member', App\Member::class);
