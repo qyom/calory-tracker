@@ -28,7 +28,7 @@ class Member extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'first_name', 'last_name', 'email', 'password', 'max_calories_per_day'
+        'first_name', 'last_name', 'email', 'password', 'max_calories_per_day', 'creator_id', 'role_type'
     ];
 
     /**

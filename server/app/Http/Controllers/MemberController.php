@@ -25,21 +25,28 @@ class MemberController extends Controller
             'last_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:members',
             'password' => 'required|string|min:6|confirmed',
-            // @TODO: 'role_type'
+            'role_type' => '|string|in:'.implode(',',array_keys(Member::$rolesMap)),
             'max_calories_per_day' => 'required|integer|min:0|max:100000',
         ]);
         if($validator->fails()){
             return response()->json($validator->errors(), 400);
         }
-        $member = Member::create([
+        $fill = [
             'first_name' => $request->get('first_name'),
             'last_name' => $request->get('last_name'),
             'email' => $request->get('email'),
             'password' => Hash::make($request->get('password')),
             'max_calories_per_day' => $request->get('max_calories_per_day'),
-        ]);
-        $token = JWTAuth::fromUser($member);
+        ];
+        if ($request->has('role_type')) {
+            $fill['role_type'] = $request->get('role_type');
+        }
+        if ($creator = JWTAuth::user()) {
+            $fill['creator_id'] = $creator->member_id;
+        }
+        $member = Member::create($fill);
 
+        $token = JWTAuth::fromUser($member);
         return response()->json(compact('member','token'),201);
     }
 
