@@ -23,4 +23,10 @@ class MealPolicy
         }
         return true;
     }
+
+    public function update(Member $self, Meal $meal)
+    {
+        return $meal->member_id == $self->member_id ||
+                Member::TYPE_ADMIN == $self->role_type;
+    }
 }

@@ -35,4 +35,21 @@ class MealController extends Controller
 
         return response()->json(compact('meal'),201);
     }
+
+    public function put(Request $request, Meal $meal)
+    {
+        if (sizeof($request->all()) == 0) {
+            return response()->json($meal, 200);
+        }
+        $validator = Validator::make($request->all(), [
+            'name' => '|string|min:1',
+            'calories' => '|integer|min:0|max:'.Meal::MAX_CALORIES_PER_MEAL,
+            'date_intake' => '|string|date_format:Y-m-d H:i:s',
+        ]);
+        if ($validator->fails()){
+            return response()->json($validator->errors(), 400);
+        }
+        $meal->update($request->all());
+        return response()->json($meal,200);        
+    }
 }

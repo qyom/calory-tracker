@@ -111,6 +111,74 @@ class MealTest extends TestCase
          $this->assertEquals(++$totalCount, Meal::count());
     }
 
+    public function testPut()
+    {
+        $this->put('/api/meal')->assertStatus(405);
+        $this->put('/api/meal/1')->assertStatus(401);
+
+        // Create a regular member with meals
+        $r1 = $this->createMember();
+        $meals = $this->createMeals($r1);
+        $mealId1 = $meals[0]->meal_id;
+        // Create another regular member
+        $r2 = $this->createMember();
+        $m1 = $this->createMember(Member::TYPE_MANAGER);
+        $m2 = $this->createMember(Member::TYPE_MANAGER);
+        $meals = $this->createMeals($m2);
+        $mealId2 = ($meal = $meals[0])->meal_id;
+        $a = $this->createMember(Member::TYPE_ADMIN);
+
+        // Regular member can't update other's  meals
+        $token = $this->login($r2);
+        $this->withTokenHeader($token)->put('/api/meal/'.$mealId1)->assertStatus(403);
+        $this->withTokenHeader($token)->put('/api/meal/'.$mealId2)->assertStatus(403);
+        // Manager also can't update other's meals
+        $token = $this->login($m1);
+        $this->withTokenHeader($token)->put('/api/meal/'.$mealId1)->assertStatus(403);
+        $this->withTokenHeader($token)->put('/api/meal/'.$mealId2)->assertStatus(403);
+        $token = $this->login($m2);
+        // Valid Access but invalid input
+        // Empty request
+        $this->withTokenHeader($token)->put('/api/meal/'.$mealId2, [])->assertStatus(200);
+        $this->withTokenHeader($token)->put('/api/meal/'.$mealId2, [
+            'name' => '',
+            'calories' => null,
+            'date_intake' => '2019-11-31 11:11:11'
+        ])->assertStatus(400)->assertJsonStructure([
+            'name', 'calories', 'date_intake'
+        ]);
+
+        // Valid Access Valid Input
+        // name is updated
+        $this->withTokenHeader($token)->put('/api/meal/'.$mealId2, [
+            'name' => 'New Name',
+        ])->assertStatus(200);
+        $meal->refresh();
+        $this->assertEquals('New Name', $meal->name);
+        // calories are updated
+        $this->withTokenHeader($token)->put('/api/meal/'.$mealId2, [
+            'calories' => 12,
+        ])->assertStatus(200);
+        $meal->refresh();
+        $this->assertEquals(12, $meal->calories);
+        // date_intake
+        $this->withTokenHeader($token)->put('/api/meal/'.$mealId2, [
+            'date_intake' => '2019-11-29 23:59:59',
+        ])->assertStatus(200);
+        $meal->refresh();
+        $this->assertEquals('2019-11-29 23:59:59', $meal->date_intake);
+        // All at once
+        $this->withTokenHeader($token)->put('/api/meal/'.$mealId2, [
+            'name' => 'Another new name',
+            'calories' => 13,
+            'date_intake' => '2019-11-29 00:00:00',
+        ])->assertStatus(200);
+        $meal->refresh();
+        $this->assertEquals('Another new name', $meal->name);
+        $this->assertEquals(13, $meal->calories);
+        $this->assertEquals('2019-11-29 00:00:00', $meal->date_intake);
+    }
+
     private function createMeals(Member $member, $total = 1)
     {
         while($total-- > 0) {
