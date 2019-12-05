@@ -36,6 +36,7 @@ Route::group(['middleware' => ['jwt.verify:1']], function() {
 
     #MEALS
     Route::get('meal/{meal}', 'MealController@get')->middleware('can:view,meal');
+    Route::post('meal', 'MealController@post')->middleware('can:create,App\Meal');
 
 });
 

@@ -14,4 +14,13 @@ class MealPolicy
     {
         return $meal->member_id == $self->member_id || $self->role_type == Member::TYPE_ADMIN;
     }
+
+    public function create(Member $self)
+    {
+        if (request()->has('member_id')) {
+            return request()->get('member_id') == $self->member_id ||
+                Member::TYPE_ADMIN == $self->role_type;
+        }
+        return true;
+    }
 }
