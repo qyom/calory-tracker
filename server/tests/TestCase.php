@@ -7,10 +7,8 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
 
-use App\Member;
+use App\Member, App\Meal;
 use JWTAuth;
-//use Tymon\JWTAuth\JWTGuard;
-
 
 abstract class TestCase extends BaseTestCase
 {
@@ -43,5 +41,13 @@ abstract class TestCase extends BaseTestCase
     protected function login($member)
     {
         return auth()->login($member);
+    }
+
+    protected function createMeals(Member $member, $total = 1)
+    {
+        while($total-- > 0) {
+            $member->meals()->save(factory(Meal::class)->make());
+        }
+        return $member->meals;
     }
 }

@@ -39,6 +39,9 @@ Route::group(['middleware' => ['jwt.verify:1']], function() {
     Route::post('meal', 'MealController@post')->middleware('can:create,App\Meal');
     Route::put('meal/{meal}', 'MealController@put')->middleware('can:update,meal');
     Route::delete('meal/{meal}', 'MealController@delete')->middleware('can:delete,meal');
+
+    Route::get('meals', 'MealsController@get');
+    Route::get('member/{member}/meals', 'MealsController@get')->middleware('can:view-many,App\Meal,member');
 });
 
 Route::model('member', App\Member::class);

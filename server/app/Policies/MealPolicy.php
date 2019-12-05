@@ -35,4 +35,10 @@ class MealPolicy
         return $meal->member_id == $self->member_id ||
                 Member::TYPE_ADMIN == $self->role_type;
     }
+
+    public function viewMany(Member $mSelf, Member $mViewed)
+    {
+        return $mSelf->member_id == $mViewed->member_id ||
+            $mSelf->role_type==Member::TYPE_ADMIN;
+    }
 }

@@ -202,12 +202,4 @@ class MealTest extends TestCase
         $this->withTokenHeader($token)->delete('/api/meal/'.$meal->meal_id)->assertStatus(200);
         $this->assertEquals(0, Meal::count());
     }
-
-    private function createMeals(Member $member, $total = 1)
-    {
-        while($total-- > 0) {
-            $member->meals()->save(factory(Meal::class)->make());
-        }
-        return $member->meals;
-    }
 }
