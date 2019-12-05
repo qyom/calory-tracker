@@ -179,6 +179,30 @@ class MealTest extends TestCase
         $this->assertEquals('2019-11-29 00:00:00', $meal->date_intake);
     }
 
+    public function testDelete()
+    {
+        $this->delete('/api/meal')->assertStatus(405);
+        $this->delete('/api/meal/1')->assertStatus(401);
+        $r = $this->createMember();
+        $meal = $this->createMeals($r)[0];
+        $token=$this->login($r);
+        $this->withTokenHeader($token)->delete('/api/meal/10')->assertStatus(404);
+        $this->withTokenHeader($token)->delete('/api/meal/'.$meal->meal_id)->assertStatus(200);
+        $this->assertEquals(0, Meal::count());
+
+        $r2 = $this->createMember();
+        $meal = $this->createMeals($r2)[0];
+        $this->withTokenHeader($token)->delete('/api/meal/'.$meal->meal_id)->assertStatus(403);
+        $m = $this->createMember(Member::TYPE_MANAGER);
+        $token = $this->login($m);
+        $this->withTokenHeader($token)->delete('/api/meal/'.$meal->meal_id)->assertStatus(403);
+        // admin
+        $a = $this->createMember(Member::TYPE_ADMIN);
+        $token = $this->login($a);
+        $this->withTokenHeader($token)->delete('/api/meal/'.$meal->meal_id)->assertStatus(200);
+        $this->assertEquals(0, Meal::count());
+    }
+
     private function createMeals(Member $member, $total = 1)
     {
         while($total-- > 0) {

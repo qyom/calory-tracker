@@ -52,4 +52,10 @@ class MealController extends Controller
         $meal->update($request->all());
         return response()->json($meal,200);        
     }
+
+    public function delete(Meal $meal)
+    {
+        $meal->forceDelete();
+        return response()->json([], 200);
+    }
 }
