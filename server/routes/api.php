@@ -12,13 +12,13 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::group(['middleware' => ['jwt.verify:0']], function() {
+Route::group(['middleware' => ['jwt.verify:0','cors']], function() {
     Route::post('member', 'MemberController@post')->middleware('can:create,App\Member');
     Route::post('auth', 'AuthController@post');
     Route::get('open', 'SomeController@open');
 });
 
-Route::group(['middleware' => ['jwt.verify:1']], function() {
+Route::group(['middleware' => ['jwt.verify:1','cors']], function() {
     Route::get('auth', 'AuthController@get');
     Route::delete('auth', 'AuthController@delete');
     Route::get('closed', 'SomeController@closed');
