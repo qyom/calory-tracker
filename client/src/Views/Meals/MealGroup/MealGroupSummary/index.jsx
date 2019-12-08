@@ -7,15 +7,15 @@ export default function MealGroup(props) {
 	const { formattedDate, numberOfMeals, calories } = props;
 
 	return (
-		<div className={styles.row}>
-			<div className={classnames(styles.cell, styles.date)}>
+		<ul className={styles.row}>
+			<li className={classnames(styles.cell, styles.date)}>
 				{formattedDate}
-			</div>
-			<div className={classnames(styles.cell, styles.quantity)}>
+			</li>
+			<li className={classnames(styles.cell, styles.quantity)}>
 				{numberOfMeals}
-			</div>
-			<div className={classnames(styles.cell, styles.calories)}>{calories}</div>
-		</div>
+			</li>
+			<li className={classnames(styles.cell, styles.calories)}>{calories}</li>
+		</ul>
 	);
 }
 

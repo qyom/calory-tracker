@@ -14,6 +14,6 @@ export default function MealGroupDetails(props) {
 	);
 }
 
-MealGroupDetails.proptypes = {
+MealGroupDetails.propTypes = {
 	meals: PropTypes.arrayOf(PropTypes.shape(mealPropsTypes)).isRequired,
 };

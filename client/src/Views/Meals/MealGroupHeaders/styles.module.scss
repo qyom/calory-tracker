@@ -1,2 +1,7 @@
 @import 'Mixins/mealsMixins.scss';
 @include mealsSummaryRow;
+
+.listHeaderRow {
+	border-bottom: 1px solid #424242;
+	font-weight: 500;
+}

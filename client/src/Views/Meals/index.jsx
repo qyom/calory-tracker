@@ -33,7 +33,7 @@ class Meals extends Component {
 		const { meals } = this.props;
 		const mealGroups = groupMealsByPeriod(meals);
 		return (
-			<div className={styles.mealGroupList}>
+			<ul className={styles.mealGroupList}>
 				<MealGroupHeaders />
 				{mealGroups.map((mealGroup, index) => (
 					<MealGroup
@@ -43,7 +43,7 @@ class Meals extends Component {
 						cellClassName={styles.cell}
 					/>
 				))}
-			</div>
+			</ul>
 		);
 	}
 	render() {
@@ -52,9 +52,9 @@ class Meals extends Component {
 			return <Spinner />;
 		}
 		return (
-			<div>
+			<div className={styles.Meals}>
 				{member && member.memberId !== userId && (
-					<h1>{`${member.firstName}'s meals`}</h1>
+					<h1 className={styles.tableName}>{`${member.firstName}'s meals`}</h1>
 				)}
 				{this.renderMealGroupList()}
 			</div>

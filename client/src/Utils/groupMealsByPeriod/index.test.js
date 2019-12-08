@@ -2,25 +2,25 @@ import moment from 'moment';
 import groupMealsByPeriod, { MEAL_GROUP_PERIODS } from './index';
 
 const meal01 = {
-	date: moment('2019-11-30 13:30'),
+	dateIntake: new Date('2019-11-30 13:30'),
 };
 const meal02 = {
-	date: moment('2019-11-30 18:20'),
+	dateIntake: new Date('2019-11-30 14:20'),
 };
 const meal03 = {
-	date: moment('2019-11-29 11:20'),
+	dateIntake: new Date('2019-11-29 11:20'),
 };
 const meal04 = {
-	date: moment('2019-11-29 11:25'),
+	dateIntake: new Date('2019-11-29 11:25'),
 };
 const meal05 = {
-	date: moment('2019-11-19 12:25'),
+	dateIntake: new Date('2019-11-19 12:25'),
 };
 const meal06 = {
-	date: moment('2019-10-01 01:10'),
+	dateIntake: new Date('2019-10-01 01:10'),
 };
 const meal07 = {
-	date: moment('2018-01-01 01:10'),
+	dateIntake: new Date('2018-01-01 01:10'),
 };
 const allMeals = [meal01, meal02, meal03, meal04, meal05, meal06, meal07];
 
