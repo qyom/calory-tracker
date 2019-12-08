@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 const HOUR = 'hour';
 const DAY = 'day';
 const WEEK = 'week';
@@ -20,12 +22,12 @@ const MOMENT_DATE_FORMAT = Object.freeze({
 });
 
 export default function groupMealsByPeriod(
-	meals,
+	meals = [],
 	period = MEAL_GROUP_PERIODS.DAY,
 ) {
 	const mealGroupsObj = meals.reduce((mealGroupsObj, meal) => {
 		const periodFormat = MOMENT_DATE_FORMAT[period];
-		const mealGroupKey = meal.date.format(periodFormat);
+		const mealGroupKey = moment(meal.dateIntake).format(periodFormat);
 		if (mealGroupsObj[mealGroupKey]) {
 			mealGroupsObj[mealGroupKey].push(meal);
 		} else {

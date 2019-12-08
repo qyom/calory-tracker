@@ -6,7 +6,10 @@ import moment from 'moment';
 
 export const mealPropsTypes = {
 	calories: PropTypes.number.isRequired,
-	date: PropTypes.object.isRequired,
+	dateIntake: PropTypes.object.isRequired,
+	dateCreated: PropTypes.object.isRequired,
+	mealId: PropTypes.string.isRequired,
+	memberId: PropTypes.string.isRequired,
 	name: PropTypes.string,
 };
 

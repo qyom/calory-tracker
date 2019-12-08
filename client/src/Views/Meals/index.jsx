@@ -1,49 +1,39 @@
-import React from 'react';
-// import styles from './styles.module.scss';
-import moment from 'moment';
-import groupMealsByPeriod from 'Utils/groupMealsByPeriod';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import styles from './styles.module.scss';
 import MealGroup from './MealGroup';
 import MealGroupHeaders from './MealGroupHeaders';
-import { styles } from 'ansi-colors';
+import groupMealsByPeriod from 'Utils/groupMealsByPeriod';
+import Spinner from 'Components/Spinner';
+import { fetchMeals, fetchMember } from 'Actions/actionCreators';
+import propTypes from 'prop-types';
 
-const meals = [
-	{
-		id: 'ml10',
-		memberId: 'mr10',
-		date: moment('2019-11-30 13:30'),
-		name: 'burger',
-		calories: 1100,
-	},
-	{
-		id: 'ml15',
-		memberId: 'mr10',
-		date: moment('2019-11-30 18:20'),
-		name: 'shake',
-		calories: 1000,
-	},
-	{
-		id: 'ml15',
-		memberId: 'mr10',
-		date: moment('2019-11-29 11:20'),
-		name: 'pizza',
-		calories: 1500,
-	},
-];
+// const member = {
+// 	id: 'mr10',
+// 	name: 'Johnson Bronson',
+// 	role: 'user',
+// 	email: 'email@email.com',
+// };
 
-const member = {
-	id: 'mr10',
-	name: 'Johnson Bronson',
-	role: 'user',
-	email: 'email@email.com',
-};
-
-export default function Meals(props) {
-	const mealGroups = groupMealsByPeriod(meals);
-	return (
-		<div>
-			<h1>{`${member.name}'s meals`}</h1>
-
-			<div className={styles.MealGroupList}>
+class Meals extends Component {
+	static propTypes = {
+		meals: propTypes.array,
+		// memberId: propTypes.string.isRequired,
+	};
+	componentDidMount() {
+		const { fetchMeals, fetchMember, member, match } = this.props;
+		const { memberId } = match.params;
+		// const { memberId } = member;
+		if (!member) {
+			fetchMember({ memberId });
+		}
+		fetchMeals({ memberId });
+	}
+	renderMealGroupList() {
+		const { meals } = this.props;
+		const mealGroups = groupMealsByPeriod(meals);
+		return (
+			<div className={styles.mealGroupList}>
 				<MealGroupHeaders />
 				{mealGroups.map((mealGroup, index) => (
 					<MealGroup
@@ -54,6 +44,31 @@ export default function Meals(props) {
 					/>
 				))}
 			</div>
-		</div>
-	);
+		);
+	}
+	render() {
+		const { meals, member, userId } = this.props;
+		if (!meals || !member) {
+			return <Spinner />;
+		}
+		return (
+			<div>
+				{member && member.memberId !== userId && (
+					<h1>{`${member.firstName}'s meals`}</h1>
+				)}
+				{this.renderMealGroupList()}
+			</div>
+		);
+	}
 }
+
+function mapStateToProps(state, ownProps) {
+	const { allMeals, members, user } = state;
+
+	const { memberId: routeMemberId } = ownProps.match.params;
+	const member = members.find(member => member.memberId === routeMemberId);
+
+	return { meals: allMeals[routeMemberId], member, userId: user.memberId };
+}
+
+export default connect(mapStateToProps, { fetchMeals, fetchMember })(Meals);

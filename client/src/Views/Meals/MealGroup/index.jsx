@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import classnames from 'classnames';
 import getMealGroupSummary from 'Utils/getMealGroupSummary';
 import MealGroupDetails from './MealGroupDetails';
 import MealGroupSummary from './MealGroupSummary';
