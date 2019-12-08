@@ -1,4 +1,4 @@
-@mixin mealsList {
+@mixin mealsSummaryRow {
 	.row {
 		border: 1px solid gold;
 		box-sizing: border-box;
@@ -11,8 +11,12 @@
 		padding: 5px 10px;
 		flex-grow: 1;
 
+		&.calories {
+			flex-basis: 20%;
+		}
+
 		&.date {
-			flex-basis: 40%;
+			flex-basis: 30%;
 		}
 
 		&.quantity {
@@ -20,8 +24,9 @@
 			// flex-grow: 0;
 		}
 
-		&.calories {
-			flex-basis: 20%;
+		&.name {
+			flex-basis: 50%;
+			// flex-grow: 0;
 		}
 	}
 }

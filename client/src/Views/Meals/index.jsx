@@ -1,9 +1,9 @@
 import React from 'react';
 // import styles from './styles.module.scss';
 import moment from 'moment';
+import groupMealsByPeriod from 'Utils/groupMealsByPeriod';
 import MealGroup from './MealGroup';
 import MealGroupHeaders from './MealGroupHeaders';
-import groupMealsByPeriod from 'Utils/groupMealsByPeriod';
 import { styles } from 'ansi-colors';
 
 const meals = [

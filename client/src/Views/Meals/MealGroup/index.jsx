@@ -1,42 +1,34 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import moment from 'moment';
+import getMealGroupSummary from 'Utils/getMealGroupSummary';
+import MealGroupDetails from './MealGroupDetails';
+import MealGroupSummary from './MealGroupSummary';
 import styles from './styles.module.scss';
-
-function getMealsSummary(meals) {
-	if (!meals.length) {
-		return {};
-	}
-
-	const calories = meals.reduce((calories, meal) => {
-		return calories + meal.calories;
-	}, 0);
-
-	const date = moment(meals[0].date).format('MM DD YYYY');
-
-	return { calories, date, numberOfMeals: meals.length };
-}
+import { mealPropsTypes } from 'Views/Meals/MealGroup/MealGroupDetails/Meal';
 
 export default function MealGroup(props) {
+	const [isDetailsVisible, setIsDetailsVisible] = useState(false);
+	const handleGroupClick = useCallback(
+		function toggleDetailVisibility() {
+			setIsDetailsVisible(!isDetailsVisible);
+		},
+		[isDetailsVisible, setIsDetailsVisible],
+	);
 	const { meals } = props;
-	const { calories, date, numberOfMeals } = getMealsSummary(meals);
+	const { calories, formattedDate, numberOfMeals } = getMealGroupSummary(meals);
 	return (
-		<div className={styles.row}>
-			<div className={classnames(styles.cell, styles.date)}>{date}</div>
-			<div className={classnames(styles.cell, styles.quantity)}>
-				{numberOfMeals}
-			</div>
-			<div className={classnames(styles.cell, styles.calories)}>{calories}</div>
+		<div className={styles.MealGroup} onClick={handleGroupClick}>
+			<MealGroupSummary
+				calories={calories}
+				formattedDate={formattedDate}
+				numberOfMeals={numberOfMeals}
+			/>
+			{isDetailsVisible && <MealGroupDetails meals={meals} />}
 		</div>
 	);
 }
 
 MealGroup.propTypes = {
-	meals: PropTypes.arrayOf(
-		PropTypes.shape({
-			calories: PropTypes.number.isRequired,
-			date: PropTypes.object.isRequired,
-		}),
-	).isRequired,
+	meals: PropTypes.arrayOf(PropTypes.shape(mealPropsTypes)).isRequired,
 };
