@@ -38,7 +38,9 @@
 		"jest-enzyme": "^7.0.2",
 		"jest-pnp-resolver": "1.0.1",
 		"jest-resolve": "^23.6.0",
+		"lodash": "^4.17.15",
 		"mini-css-extract-plugin": "0.4.3",
+		"moment": "^2.24.0",
 		"node-sass": "^4.13.0",
 		"optimize-css-assets-webpack-plugin": "5.0.1",
 		"pnp-webpack-plugin": "1.1.0",
@@ -46,7 +48,7 @@
 		"postcss-loader": "3.0.0",
 		"postcss-preset-env": "6.3.1",
 		"postcss-safe-parser": "4.0.1",
-		"prop-types": "^15.6.2",
+		"prop-types": "^15.7.2",
 		"react": "^16.8.6",
 		"react-app-polyfill": "^0.2.0",
 		"react-dev-utils": "^7.0.1",
@@ -90,7 +92,7 @@
 		"setupFiles": [
 			"react-app-polyfill/jsdom"
 		],
-		"setupTestFrameworkScriptFile": "<rootDir>/src/setupTests.js",
+		"setupTestFrameworkScriptFile": "<rootDir>/setupTests.js",
 		"testMatch": [
 			"<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
 			"<rootDir>/src/**/?(*.)(spec|test).{js,jsx,ts,tsx}"

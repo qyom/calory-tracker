@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter, Route } from 'react-router-dom';
 import Meals from 'Views/Meals';
 import Users from 'Views/Users';
-import Settings from 'Views/Settings';
+import Account from 'Views/Account';
 import TopBar from 'Components/TopBar';
 
 function App() {
@@ -10,9 +10,9 @@ function App() {
 		<BrowserRouter>
 			<div>
 				<TopBar />
-				<Route path="/Meals" component={Meals} />
-				<Route path="/Users" component={Users} />
-				<Route path="/Settings" component={Settings} />
+				<Route path="/users" component={Users} />
+				<Route path="/:id/meals" component={Meals} />
+				<Route path="/:id/account" component={Account} />
 			</div>
 		</BrowserRouter>
 	);

@@ -1,0 +1,27 @@
+@mixin mealsList {
+	.row {
+		border: 1px solid gold;
+		box-sizing: border-box;
+		display: flex;
+		width: 100%;
+	}
+
+	.cell {
+		border: 1px solid blue;
+		padding: 5px 10px;
+		flex-grow: 1;
+
+		&.date {
+			flex-basis: 40%;
+		}
+
+		&.quantity {
+			flex-basis: 5%;
+			// flex-grow: 0;
+		}
+
+		&.calories {
+			flex-basis: 20%;
+		}
+	}
+}

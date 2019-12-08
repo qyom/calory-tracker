@@ -1,4 +1,8 @@
-.TopBar {
-	display: flex;
-	justify-content: space-between;
+.CustomNavLink {
+	padding: 5px 10px;
+	text-decoration: none;
+}
+.activeNavLink {
+	background: brown;
+	color: white;
 }

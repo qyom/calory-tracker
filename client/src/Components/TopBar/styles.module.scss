@@ -1,4 +1,18 @@
 .TopBar {
 	display: flex;
 	justify-content: space-between;
+	padding: 10px 20px;
+	background: beige;
+}
+
+.controls {
+	display: flex;
+}
+
+.controlsItem {
+	margin: 0 10px;
+	&:first-child,
+	&:last-child {
+		margin: 0;
+	}
 }
