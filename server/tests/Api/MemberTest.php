@@ -114,33 +114,58 @@ class MemberTest extends TestCase
             
     }
     
-    public function testInvalidPostAccess()
+    public function testPostAccess()
     {
-        // Create a regular member
-        $member = factory(Member::class)->create([
-            'email' => 'toptal@test.com',
-            'role_type' => Member::TYPE_REGULAR,
-            'password' => bcrypt('toptaltest'),
-        ]);
-        // Generate its token to specify as current in header
-        $token = JWTAuth::fromUser($member);
-        $this->withTokenHeader($token)->json('post', '/api/member', $this->validPayload)->assertStatus(403);
-    }
-
-    public function testValidPostAccess()
-    {
-        // Create a regular member
-        $member = factory(Member::class)->create([
-            'email' => 'toptal@test.com',
-            'role_type' => Member::TYPE_MANAGER,
-            'password' => bcrypt('toptaltest'),
-        ]);
-        // Generate its token to specify as current in header
-        $token = JWTAuth::fromUser($member);
-        $this->withTokenHeader($token)->json('post', '/api/member', $this->validPayload)->assertStatus(201);
-        $member->role_type = Member::TYPE_ADMIN;
-        $token = JWTAuth::fromUser($member);
-        $this->withTokenHeader($token)->json('post', '/api/member', ['email'=>'another@email.com']+$this->validPayload)->assertStatus(201);
+        // You can't register yourself as admin
+        $this->post(
+            '/api/member',
+            ['role_type' => Member::TYPE_ADMIN] + $this->validPayload
+        )->assertStatus(400)->assertJsonStructure(['role_type']);
+        // You can't register yourself as manager
+        $this->post(
+            '/api/member',
+            ['role_type' => Member::TYPE_MANAGER] + $this->validPayload
+        )->assertStatus(400)->assertJsonStructure(['role_type']);
+        // Create a regular member and login
+        $member = $this->createMember();
+        $token = $this->login($member);
+        // You can't register anybody else if you're regular
+        $this->withTokenHeader($token)->post(
+            '/api/member',
+            ['role_type' => Member::TYPE_REGULAR] + $this->validPayload
+        )->assertStatus(403);
+        // You can't create an admin if you're a manager
+        $token = $this->login($this->createMember(Member::TYPE_MANAGER));
+        $this->withTokenHeader($token)->post(
+            '/api/member',
+            ['role_type' => Member::TYPE_ADMIN] + $this->validPayload
+        )->assertStatus(400)->assertJsonStructure(['role_type']);
+        // You can create a manager if you're a manager
+        $this->withTokenHeader($token)->post(
+            '/api/member',
+            ['role_type' => Member::TYPE_MANAGER] + $this->validPayload
+        )->assertStatus(201);
+        // You can create a regular if you're  a manager
+        $this->withTokenHeader($token)->post(
+            '/api/member',
+            ['role_type' => Member::TYPE_REGULAR,'email' => 'email2@example.com'] + $this->validPayload
+        )->assertStatus(201);
+        // Admin can
+        $token = $this->login($this->createMember(Member::TYPE_ADMIN));
+        $this->withTokenHeader($token)->post(
+            '/api/member',
+            ['role_type' => Member::TYPE_ADMIN,'email' => 'email3@example.com'] + $this->validPayload
+        )->assertStatus(201);
+        // You can create a manager if you're a manager
+        $this->withTokenHeader($token)->post(
+            '/api/member',
+            ['role_type' => Member::TYPE_MANAGER, 'email' => 'email4@example.com'] + $this->validPayload
+        )->assertStatus(201);
+        // You can create a regular if you're  a manager
+        $this->withTokenHeader($token)->post(
+            '/api/member',
+            ['role_type' => Member::TYPE_REGULAR,'email' => 'email5@example.com',] + $this->validPayload
+        )->assertStatus(201);
     }
 
     public function testInvalidPutInput()

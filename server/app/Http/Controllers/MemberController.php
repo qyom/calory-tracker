@@ -17,31 +17,45 @@ class MemberController extends Controller
         }
         return response()->json($memberGet, 200);
     }
+    private function getAllowedRolesByCreator(Member $creator = null)
+    {
+        if (null == $creator) {
+            return [Member::TYPE_REGULAR];
+        }
+        switch($creator->role_type) {
+            case Member::TYPE_ADMIN: 
+                return array_keys(Member::$rolesMap);
+            case Member::TYPE_MANAGER: 
+                return [Member::TYPE_REGULAR, Member::TYPE_MANAGER];
+            case Member::TYPE_REGULAR: 
+                return [Member::TYPE_REGULAR];
+        }
+    }
 
     public function post(Request $request)
     {
+        $creator = JWTAuth::user();
+        $allowedRoles = $this->getAllowedRolesByCreator($creator);
         $validator = Validator::make($request->all(), [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:members',
             'password' => 'required|string|min:6|confirmed',
-            'role_type' => '|string|in:'.implode(',',array_keys(Member::$rolesMap)),
+            'role_type' => '|string|in:'.implode(',',$allowedRoles),
             'max_calories_per_day' => 'required|integer|min:0|max:100000',
         ]);
         if($validator->fails()){
             return response()->json($validator->errors(), 400);
         }
         $fill = [
+            'role_type' => $request->get('role_type', Member::TYPE_REGULAR),
             'first_name' => $request->get('first_name'),
             'last_name' => $request->get('last_name'),
             'email' => $request->get('email'),
             'password' => Hash::make($request->get('password')),
             'max_calories_per_day' => $request->get('max_calories_per_day'),
-        ];
-        if ($request->has('role_type')) {
-            $fill['role_type'] = $request->get('role_type');
-        }
-        if ($creator = JWTAuth::user()) {
+        ];        
+        if ($creator) {
             $fill['creator_id'] = $creator->member_id;
         }
         $member = Member::create($fill);
@@ -50,16 +64,19 @@ class MemberController extends Controller
         return response()->json(compact('member','token'),201);
     }
 
-    public function put(Request $request, Member $memberPut = null)
+    public function put(Request $request, Member $member = null)
     {
         $memberMe = JWTAuth::user();
-        if (!$memberPut) {
-            $memberPut = $memberMe;
+        if (!$member) {
+            $member = $memberMe;
+        }
+        if (sizeof($request->all()) == 0) {
+            return response()->json($meal, 200);
         }
         $validator = Validator::make($request->all(), [
             'first_name' => '|string|max:255',
             'last_name' => '|string|max:255',
-            'email' => '|string|email|max:255|unique:members,email,'.$memberPut->member_id.',member_id',
+            'email' => '|string|email|max:255|unique:members,email,'.$member->member_id.',member_id',
             'password' => '|string|min:6|confirmed',
             'max_calories_per_day' => '|integer|min:0|max:100000',
         ]);
@@ -81,11 +98,11 @@ class MemberController extends Controller
         if($request->has('max_calories_per_day')) {
             $fill['max_calories_per_day'] = $request->get('max_calories_per_day');
         }
-        $memberPut->fill($fill);
-        $memberPut->save();
-        $token = JWTAuth::fromUser($memberPut);
+        $member->fill($fill);
+        $member->save();
+        $token = JWTAuth::fromUser($member);
 
-        return response()->json(compact('memberPut','token'),200);
+        return response()->json(compact('member','token'),200);
     }
 
     public function delete(Request $request, Member $memberDelete = null)
