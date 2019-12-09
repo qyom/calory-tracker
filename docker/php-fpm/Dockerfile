@@ -8,3 +8,4 @@ RUN apt-get update \
 
 # install sqlite
 # add /vendor/bin to PATH
+# php artisan queue:listen

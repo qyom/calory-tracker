@@ -18,7 +18,7 @@ class Member extends Authenticatable implements JWTSubject
         self::TYPE_MANAGER => 20,
         self::TYPE_ADMIN => 30,
     ];
-
+    const SALT = '%j@^@i+-d2';
 
     protected $primaryKey = 'member_id';
 
@@ -64,5 +64,10 @@ class Member extends Authenticatable implements JWTSubject
 
     public static function compareRoles($role1, $role2) {
         return self::$rolesMap[$role1] <=> self::$rolesMap[$role2];
+    }
+
+    public function getActivationToken()
+    {
+        return md5($this->member_id.self::SALT.microtime());
     }
 }

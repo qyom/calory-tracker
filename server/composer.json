@@ -10,8 +10,11 @@
     "require": {
         "php": "^7.2",
         "fideloper/proxy": "^4.0",
+        "guzzlehttp/guzzle": "^6.5",
         "laravel/framework": "^6.2",
         "laravel/tinker": "^2.0",
+        "s-ichikawa/laravel-sendgrid-driver": "^2.1",
+        "sendgrid/sendgrid": "~7",
         "tymon/jwt-auth": "dev-develop"
     },
     "require-dev": {

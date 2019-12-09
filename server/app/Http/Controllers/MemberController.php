@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use App\Jobs\ProcessNewMember;
 
 class MemberController extends Controller
 {
@@ -59,6 +60,9 @@ class MemberController extends Controller
             $fill['creator_id'] = $creator->member_id;
         }
         $member = Member::create($fill);
+
+        // Dispatch event to the queue
+        ProcessNewMember::dispatch($member);
 
         $token = JWTAuth::fromUser($member);
         return response()->json(compact('member','token'),201);
