@@ -1,9 +1,9 @@
 import React from 'react';
 import { BrowserRouter, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import Meals from 'Views/Meals';
-import Members from 'Views/Members';
-import Account from 'Views/Account';
+import Meals from 'Components/views/Meals';
+import Members from 'Components/views/Members';
+import Account from 'Components/views/Account';
 import NavBar from 'Components/NavBar';
 import store from 'Reducers/store.js';
 
