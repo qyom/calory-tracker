@@ -1,29 +1,48 @@
-import update from 'immutability-helper';
-
-import { SET_USER } from 'Constants/actionTypes';
-import moment from 'moment';
+import { AUTH_USER, UNAUTH_USER } from 'Constants/actionTypes';
 import { normalizeMember } from 'Utils/normalizers';
-// const initialState = {
-// 	first_name: 'Demarcus',
-// 	last_name: 'Fay',
-// 	max_calories_per_day: 1470,
-// 	member_id: 1,
-// 	email: 'demarcus.fay@cal.com',
+
+export const initialState = {
+	isLoading: false,
+	error: null,
+	data: normalizeMember({
+		first_name: 'Augusta',
+		last_name: 'Ziemann',
+		max_calories_per_day: 1557,
+		member_id: 2,
+		role_type: 'ADMIN',
+		email: 'augusta.ziemann@cal.com',
+	}),
+};
+// export const initialState = {
+//     isLoading: false,
+//     error: null,
+//     data: null,
 // };
-export const initialState = normalizeMember({
-	first_name: 'Maiya',
-	last_name: 'Bernier',
-	max_calories_per_day: 1806,
-	member_id: 1,
-	email: 'maiya.bernier@cal.com',
-});
 
 export default function mealsReducer(state = initialState, action) {
 	switch (action.type) {
-		case SET_USER: {
-			const { meals, memberId } = action.payload;
-			// console.log("data: ", data);
-			return { ...state, [memberId]: meals };
+		// auth
+		case AUTH_USER.START: {
+			return { isLoading: true, error: null, data: null };
+		}
+		case AUTH_USER.FINISH: {
+			const { member } = action.payload;
+			return { isLoading: false, error: null, data: member };
+		}
+		case AUTH_USER.ERROR: {
+			const error = action.payload;
+			return { isLoading: false, error, data: null };
+		}
+		// unauth
+		case UNAUTH_USER.START: {
+			return { isLoading: true, error: null, data: null };
+		}
+		case UNAUTH_USER.FINISH: {
+			return { isLoading: false, error: null, data: null };
+		}
+		case UNAUTH_USER.ERROR: {
+			const error = action.payload;
+			return { isLoading: false, error, data: null };
 		}
 
 		default:

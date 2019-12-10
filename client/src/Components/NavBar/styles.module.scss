@@ -10,9 +10,19 @@
 }
 
 .controlsItem {
+	padding: 5px 10px;
+	font-size: 1rem;
+	line-height: 1rem;
+	// color: #e2e2e2;
 	margin: 0 10px;
 	&:first-child,
 	&:last-child {
 		margin: 0;
 	}
+}
+
+.controlsItemButton {
+	color: #e2e2e2;
+	background: transparent;
+	border: none;
 }

@@ -17,7 +17,7 @@ class Members extends Component {
 					onClick={event => {
 						this.handleMemberClick(member.memberId);
 					}}
-					key={member.memberId}
+					key={member.memberId + ''}
 				>
 					{member.firstName}
 				</div>

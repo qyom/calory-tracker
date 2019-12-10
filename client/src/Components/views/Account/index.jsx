@@ -114,6 +114,10 @@ class Account extends Component {
 		this.toggleEditMode();
 	};
 
+	handleDeleteClick = event => {
+		event.preventDefault();
+	};
+
 	handleFieldChange = (event, config) => {
 		this.setState({
 			[config.name]: event.target.value,
@@ -174,6 +178,7 @@ class Account extends Component {
 				{!isEditMode && <button onClick={this.handleEditClick}>Edit</button>}
 				{isEditMode && <button onClick={this.handleSaveClick}>Save</button>}
 				{isEditMode && <button onClick={this.handleCancelClick}>Cancel</button>}
+				<button onClick={this.handleDeleteClick}>Delete</button>
 			</div>
 		);
 	}
@@ -183,6 +188,6 @@ function mapStateToProps(state, ownProps) {
 	const { user, members } = state;
 	const { memberId: routeMemberId } = ownProps.match.params;
 	const member = members.find(member => member.memberId === routeMemberId);
-	return { member, userId: user.memberId };
+	return { member, userId: user.data.memberId };
 }
 export default connect(mapStateToProps, { updateMember, fetchMember })(Account);
