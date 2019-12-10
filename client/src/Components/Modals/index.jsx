@@ -27,10 +27,8 @@ export default function Modal(props) {
 
 
 	if(props.isVisible) {
-		console.log('alo du es bloe du es')
 		return ReactDOM.createPortal(createModal(),document.getElementById('root'))
 	} else {
-		console.log('alooooo')
 		return null;
 	}
 }

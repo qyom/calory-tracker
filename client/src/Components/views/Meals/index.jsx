@@ -5,14 +5,27 @@ import { Link } from 'react-router-dom';
 import MealGroup from './MealGroup';
 import MealGroupHeaders from './MealGroupHeaders';
 import ViewHeader from 'Components/ViewHeader';
+import DateTimeRangeFilter from 'Components/Filters/DateTimeFilter'
 import groupMealsByPeriod from 'Utils/groupMealsByPeriod';
 import Spinner from 'Components/Spinner';
 import { fetchMeals, fetchMember } from 'Actions';
 import PropTypes from 'prop-types';
 import { memberPropTypes } from 'Components/views/Account';
 import { mealPropTypes } from 'Components/views/Meals/MealGroup/MealGroupDetails/Meal';
+import moment from 'moment';
 
 class Meals extends Component {
+		constructor(props){
+			super(props);
+			this.state = {
+				dateTimeRange: [null, null],
+				intake_date_from: null,
+    			intake_date_to: null,
+    			intake_hours_from: null,
+    			intake_hours_to: null
+			}
+		}
+
 	static propTypes = {
 		meals: PropTypes.arrayOf(mealPropTypes),
 		member: memberPropTypes,
@@ -23,6 +36,7 @@ class Meals extends Component {
 		}).isRequired,
 		userId: PropTypes.string.isRequired,
 	};
+
 	componentDidMount() {
 		const { fetchMeals, fetchMember, member, match } = this.props;
 		const { memberId } = match.params;
@@ -31,11 +45,12 @@ class Meals extends Component {
 		}
 		fetchMeals({ memberId });
 	}
+
 	renderMealGroupList() {
 		const { meals } = this.props;
 		const mealGroups = groupMealsByPeriod(meals);
 		return (
-			<ul className={styles.mealGroupList}>
+			<ul className={styles.MealGroupList}>
 				<MealGroupHeaders />
 				{mealGroups.map((mealGroup, index) => (
 					<MealGroup
@@ -48,6 +63,43 @@ class Meals extends Component {
 			</ul>
 		);
 	}
+
+	onFilterChange = (dateTimeRange) => {
+		console.log('dateTimeRange', dateTimeRange)
+		const from = dateTimeRange[0],
+			to = dateTimeRange[1],
+		 	intake_date_from = moment(from).format("YYYY-MM-DD"),
+			intake_date_to = moment(from).format("YYYY-MM-DD"),
+			intake_hours_from = from.getHours(),
+			intake_hours_to =  to.getHours();
+		this.setState({
+			dateTimeRange, 
+			intake_date_from,
+		 	intake_date_to, 
+		 	intake_hours_from, 
+		 	intake_hours_to }, ()=>{
+		 	console.log('STATE---', this.state)
+		 })
+	} 
+
+	resetFilter = () => {
+		this.setState({
+			intake_date_from: null,
+		 	intake_date_to: null,
+		 	intake_hours_from: null, 
+		 	intake_hours_to: null,
+		 	dateTimeRange: [null, null] 
+		 })
+	}
+
+	filterMeals = () => {
+		const { intake_date_from,
+		 	intake_date_to, 
+		 	intake_hours_from, 
+		 	intake_hours_to }  = this.state;
+		console.log('CALL FILTER API') 	
+	}
+
 	render() {
 		const { meals, member, userId } = this.props;
 		if (!meals || !member) {
@@ -64,6 +116,13 @@ class Meals extends Component {
 					{headerMessage}
 					<Link to={`/members/${member.memberId}`}>(View account)</Link>
 				</ViewHeader>
+				<DateTimeRangeFilter 
+					onFilterChange={this.onFilterChange} 
+					dateTimeRange={this.state.dateTimeRange}
+					onFilter={this.filterMeals}
+					onReset={this.resetFilter}
+				/> 
+			
 				{this.renderMealGroupList()}
 			</div>
 		);

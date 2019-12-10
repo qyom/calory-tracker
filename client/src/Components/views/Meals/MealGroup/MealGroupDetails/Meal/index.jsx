@@ -5,7 +5,6 @@ import Modal from 'Components/Modals';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import styles from './styles.module.scss';
-import './styles.module.scss';
 import './styles.scss';
 import moment from 'moment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -38,7 +37,8 @@ export default class Meal extends Component {
 			calories,
 			dateIntake,
 			name,
-			isModalVisible: false
+			isModalVisible: false,
+			dateRange: null
 		};
 	}
 
@@ -47,7 +47,8 @@ export default class Meal extends Component {
 		this.setState({ editMode });
 	};
 
-	selectDataTime = (dateIntake) => {
+	selectDataTime = (dateIntake, name ) => {
+		console.log('whats name', dateIntake, name)
 		this.setState({dateIntake})
 	}
 
@@ -88,6 +89,7 @@ export default class Meal extends Component {
 							disableClock={true}
 							calendarIcon={null}
 							clearIcon={null}
+					
 							/>
 							: moment(dateIntake).format('h:MM a')}
 					</li>

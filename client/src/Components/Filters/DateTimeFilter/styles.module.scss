@@ -1,0 +1,26 @@
+@import 'Mixins/mealsMixins.scss';
+@include buttons;
+
+.Filters {
+	text-align: right;
+	margin: 40px 0 20px;
+	position: relative;
+}
+
+.labelGroup {
+	width: 390px;
+	position: absolute;
+	top: -20px;
+	right: 150px;
+	color: #999999;
+}
+
+.filterLabel {
+	display: inline-block;
+	width: 50%;
+	text-align: center;
+}
+
+.filterControls {
+	display: inline-block;
+}

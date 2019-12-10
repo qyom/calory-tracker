@@ -30,3 +30,37 @@
 		}
 	}
 }
+
+@mixin buttons {
+	.cntlBtn {
+		min-width: 50px;
+		height: 30px;
+		margin: 0 10px;
+		border-radius: 5px;
+		border: none;
+		cursor: pointer;
+		outline: none;
+	}
+
+	.cntlBtn:focus {
+		outline: none;
+	}
+
+	.primaryBtn {
+		background-color: #ffb84d;
+	}
+
+	.primaryBtn:hover {
+		background-color: #faf3eb;
+		border: 1px solid #ffb84d;
+	}
+
+	.secondaryBtn {
+		background-color: #cccccc;
+	}
+
+	.secondaryBtn:hover {
+		background-color: #e2e2e2;
+		border: 1px solid #cccccc;
+	}
+}
