@@ -8,7 +8,7 @@ export function normalizeMeal(meal) {
 		dateCreated: new Date(meal.date_created),
 	};
 }
-export function deNormalizeMeal(meal) {
+export function denormalizeMeal(meal) {
 	return {
 		member_id: String(meal.memberId),
 		meal_id: String(meal.mealId),
@@ -32,7 +32,7 @@ export function normalizeMember(member) {
 	};
 }
 
-export function deNormalizeMember(member) {
+export function denormalizeMember(member) {
 	return {
 		member_id: String(member.memberId),
 		role_type: String(member.roleType),

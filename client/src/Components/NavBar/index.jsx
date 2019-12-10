@@ -15,11 +15,11 @@ function TopBar(props) {
 				</CustomNavLink>
 			</div>
 			<div className={styles.controls}>
-				<CustomNavLink to={`/${userId}/meals`} className={styles.controlsItem}>
+				<CustomNavLink to={`/meals/${userId}`} className={styles.controlsItem}>
 					My Meals
 				</CustomNavLink>
 				<CustomNavLink
-					to={`/${userId}/account`}
+					to={`/members/${userId}`}
 					className={styles.controlsItem}
 				>
 					My Account

@@ -10,12 +10,12 @@ import { normalizeMember } from 'Utils/normalizers';
 // 	member_id: 1,
 // 	email: 'demarcus.fay@cal.com',
 // };
-const initialState = normalizeMember({
-	first_name: 'Demarcus',
-	last_name: 'Fay',
-	max_calories_per_day: 1470,
+export const initialState = normalizeMember({
+	first_name: 'Maiya',
+	last_name: 'Bernier',
+	max_calories_per_day: 1806,
 	member_id: 1,
-	email: 'demarcus.fay@cal.com',
+	email: 'maiya.bernier@cal.com',
 });
 
 export default function mealsReducer(state = initialState, action) {

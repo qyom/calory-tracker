@@ -5,6 +5,90 @@
 	background-color: #faf3eb;
 }
 
+.row {
+	height: 45px;
+}
+
 .cell {
 	flex-basis: 33%;
+	padding: 10px 15px;
 }
+
+.cellDetail {
+	flex-basis: 30%;
+	padding: 15px;
+}
+
+.cellDetailEdit {
+	flex-basis: 30%;
+	padding: 8px 15px;
+}
+
+.name {
+	text-align: center;
+	flex-basis: 30%;
+}
+
+.date {
+	flex-basis: 30%;
+}
+.calory {
+	flex-basis: 10%;
+}
+
+.mealEditBtn, .mealSaveBtn {
+    flex-basis: 20%;
+}
+
+.editBtnGroup {
+	position: absolute;
+    right: 5px;
+}
+
+.mealSaveBtn {
+	font-size: 16px;
+}
+
+.detailInput {
+	font-size: 16px;
+	padding: 4px 5px;
+	width: 100%;
+	margin-left: -10px;		
+}
+
+.detailInput:focus {
+	outline: none;
+	border: 1px solid #ffb84d;
+}
+
+@media screen and (max-width: 700px) {
+	.row {
+		display: block;
+		height: 130px;
+		padding: 10px 0;
+		position: relative;
+		cursor: default;
+	}
+
+	.cellDetail {
+		padding: 10px 20px;
+		text-align: left;
+	}
+
+	.cellDetailEdit {
+		width: 180px;
+		padding: 3px 15px;
+	}
+
+	.detailInput {
+		margin: 0;
+	}
+
+	.editBtnGroup {
+		position: absolute;
+		right: 30px;
+    	top: 40px;
+	}
+}
+
+

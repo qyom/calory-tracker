@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styles from './styles.module.scss';
-import Meal, { mealPropsTypes } from './Meal';
+import Meal, { mealPropTypes } from './Meal';
 
 export default function MealGroupDetails(props) {
 	const { meals } = props;
@@ -15,5 +15,5 @@ export default function MealGroupDetails(props) {
 }
 
 MealGroupDetails.propTypes = {
-	meals: PropTypes.arrayOf(PropTypes.shape(mealPropsTypes)).isRequired,
+	meals: PropTypes.arrayOf(mealPropTypes).isRequired,
 };

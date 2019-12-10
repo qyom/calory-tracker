@@ -4,7 +4,7 @@ import getMealGroupSummary from 'Utils/getMealGroupSummary';
 import MealGroupDetails from './MealGroupDetails';
 import MealGroupSummary from './MealGroupSummary';
 import styles from './styles.module.scss';
-import { mealPropsTypes } from 'Components/views/Meals/MealGroup/MealGroupDetails/Meal';
+import { mealPropTypes } from 'Components/views/Meals/MealGroup/MealGroupDetails/Meal';
 
 export default class MealGroup extends Component {
 	constructor(props) {
@@ -27,11 +27,12 @@ export default class MealGroup extends Component {
 		);
 		const { isDetailsVisible } = this.state;
 		return (
-			<li className={styles.MealGroup} onClick={this.handleGroupClick}>
+			<li className={styles.MealGroup}>
 				<MealGroupSummary
 					calories={calories}
 					formattedDate={formattedDate}
 					numberOfMeals={numberOfMeals}
+					handleGroupClick={this.handleGroupClick}
 				/>
 				{isDetailsVisible && <MealGroupDetails meals={meals} />}
 			</li>
@@ -40,5 +41,5 @@ export default class MealGroup extends Component {
 }
 
 MealGroup.propTypes = {
-	meals: PropTypes.arrayOf(PropTypes.shape(mealPropsTypes)).isRequired,
+	meals: PropTypes.arrayOf(mealPropTypes).isRequired,
 };

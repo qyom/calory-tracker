@@ -4,10 +4,10 @@ import classnames from 'classnames';
 import styles from './styles.module.scss';
 
 export default function MealGroup(props) {
-	const { formattedDate, numberOfMeals, calories } = props;
+	const { formattedDate, numberOfMeals, calories, handleGroupClick } = props;
 
 	return (
-		<ul className={styles.row}>
+		<ul className={styles.row} onClick={handleGroupClick}>
 			<li className={classnames(styles.cell, styles.date)}>
 				{formattedDate}
 			</li>

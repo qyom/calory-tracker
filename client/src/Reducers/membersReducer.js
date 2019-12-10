@@ -1,9 +1,9 @@
 import update from 'immutability-helper';
 
-import { SET_MEMBERS, ADD_MEMBER } from 'Constants/actionTypes';
-import moment from 'moment';
+import { SET_MEMBERS, ADD_MEMBER, SET_MEMBER } from 'Constants/actionTypes';
+import { initialState as userInitialState } from './userReducer';
 
-const initialState = [];
+const initialState = [userInitialState];
 
 export default function mealsReducer(state = initialState, action) {
 	switch (action.type) {
@@ -16,6 +16,16 @@ export default function mealsReducer(state = initialState, action) {
 			const { member } = action.payload;
 			// console.log("data: ", data);
 			return [...state, member];
+		}
+		case SET_MEMBER: {
+			const { member } = action.payload;
+			// console.log("data: ", data);
+			const index = state.findIndex(
+				currentMember => currentMember.memberId === member.memberId,
+			);
+			const newState = [...state];
+			newState.splice(index, 0, member);
+			return newState;
 		}
 
 		default:

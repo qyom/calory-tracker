@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { fetchMembers } from 'Actions/actionCreators';
+import { fetchMembers } from 'Actions';
 // import styles from './styles.module.scss';
 
 class Members extends Component {
@@ -8,7 +8,7 @@ class Members extends Component {
 		this.props.fetchMembers();
 	}
 	handleMemberClick = memberId => {
-		this.props.history.push(`/${memberId}/meals`);
+		this.props.history.push(`/meals/${memberId}`);
 	};
 	renderMembers() {
 		return this.props.members.map(member => {

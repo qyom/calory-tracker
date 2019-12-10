@@ -1,29 +1,31 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import styles from './styles.module.scss';
+import { Link } from 'react-router-dom';
 import MealGroup from './MealGroup';
 import MealGroupHeaders from './MealGroupHeaders';
+import ViewHeader from 'Components/ViewHeader';
 import groupMealsByPeriod from 'Utils/groupMealsByPeriod';
 import Spinner from 'Components/Spinner';
-import { fetchMeals, fetchMember } from 'Actions/actionCreators';
-import propTypes from 'prop-types';
-
-// const member = {
-// 	id: 'mr10',
-// 	name: 'Johnson Bronson',
-// 	role: 'user',
-// 	email: 'email@email.com',
-// };
+import { fetchMeals, fetchMember } from 'Actions';
+import PropTypes from 'prop-types';
+import { memberPropTypes } from 'Components/views/Account';
+import { mealPropTypes } from 'Components/views/Meals/MealGroup/MealGroupDetails/Meal';
 
 class Meals extends Component {
 	static propTypes = {
-		meals: propTypes.array,
-		// memberId: propTypes.string.isRequired,
+		meals: PropTypes.arrayOf(mealPropTypes),
+		member: memberPropTypes,
+		match: PropTypes.shape({
+			params: PropTypes.shape({
+				memberId: PropTypes.string.isRequired,
+			}).isRequired,
+		}).isRequired,
+		userId: PropTypes.string.isRequired,
 	};
 	componentDidMount() {
 		const { fetchMeals, fetchMember, member, match } = this.props;
 		const { memberId } = match.params;
-		// const { memberId } = member;
 		if (!member) {
 			fetchMember({ memberId });
 		}
@@ -51,11 +53,17 @@ class Meals extends Component {
 		if (!meals || !member) {
 			return <Spinner />;
 		}
+
+		let headerMessage = `${member.firstName} ${member.lastName}'s meals`;
+		if (member.memberId === userId) {
+			headerMessage = 'My meals';
+		}
 		return (
 			<div className={styles.Meals}>
-				{member && member.memberId !== userId && (
-					<h1 className={styles.tableName}>{`${member.firstName}'s meals`}</h1>
-				)}
+				<ViewHeader>
+					{headerMessage}
+					<Link to={`/members/${member.memberId}`}>(View account)</Link>
+				</ViewHeader>
 				{this.renderMealGroupList()}
 			</div>
 		);

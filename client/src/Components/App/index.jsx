@@ -13,16 +13,16 @@ function App() {
 			<Provider store={store}>
 				<div>
 					<NavBar />
-					<Route path="/members" component={Members} />
+					<Route path="/members" component={Members} exact />
 					<Route
-						path="/:memberId/meals"
+						path="/meals/:memberId"
 						render={props => {
 							const { memberId } = props.match.params;
 							return <Meals {...props} key={memberId} />;
 						}}
 					/>
 					<Route
-						path="/:memberId/account"
+						path="/members/:memberId"
 						render={props => {
 							const { memberId } = props.match.params;
 							return <Account {...props} key={memberId} />;

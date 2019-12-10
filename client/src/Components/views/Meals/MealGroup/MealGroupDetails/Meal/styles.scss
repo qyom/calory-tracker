@@ -1,0 +1,20 @@
+.detailInput .react-datetime-picker__wrapper {
+ 	background: white;
+ 	height: 28px;
+ 	border: 1px solid #cecaca;
+}
+
+.detail-icon {
+	margin: 15px 10px;
+	cursor: pointer;
+	color: #424242;
+}
+.detail-icon:hover {
+	color: #ffb84d;
+}
+
+@media screen and (max-width: 700px) {
+	.detailInput  .react-datetime-picker__wrapper {
+		width: 193px;
+	}
+}
