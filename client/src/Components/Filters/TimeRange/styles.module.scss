@@ -1,0 +1,11 @@
+.TimeRange {
+	display: inline-block
+}
+
+@media screen and (max-width: 525px) {
+	.TimeRange::before {
+		content: 'Time';
+		margin-right: 10px;
+		color: #999999;
+	}
+}

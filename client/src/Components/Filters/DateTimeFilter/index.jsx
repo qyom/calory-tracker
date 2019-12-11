@@ -1,25 +1,45 @@
 import React from 'react';
-import DateTimeRangePicker from '@wojtekmaj/react-datetimerange-picker';
+import DateRange from '../DateRange'
+import TimeRange from '../TimeRange'
 import classnames from 'classnames';
 import styles from './styles.module.scss';
-import './styles.scss'
 
 export default function DateTimeFilter(props) {
-	const { onFilterChange, dateTimeRange, onFilter, onReset }  = props;
+	const { onDateRangeChange,onTimeRangeChange,
+	 dateRange, timeRange, onFilter, onReset }  = props;
 
 	return (	
 		<div className={styles.Filters}>
 			<div className={styles.labelGroup}> 
-				<label className={styles.filterLabel}>from</label>
-				<label className={styles.filterLabel}>to</label>
+				<label className={styles.filterLabel}>Date</label>
+				<label className={styles.filterLabel}>Time</label>
 			</div>
-			<DateTimeRangePicker 
-				onChange={onFilterChange}
-				value={dateTimeRange}
-				disableClock={true}
-				calendarIcon={null}
-				clearIcon={null}
-			/>
+			<div className={styles.labelSecondaryGroup}>
+				<label className={styles.filterLabel}>
+					<span className={styles.filterLabelDate}>from</span>
+					<span className={styles.filterLabelTime}>to</span>
+				</label>
+				<label className={styles.filterLabel}>
+					<span className={styles.filterLabelDate}>from</span>
+					<span className={styles.filterLabelTime}>to</span>
+				</label>
+			</div>
+			<div className={styles.DateTimeFilterGroup}>
+				<DateRange 
+					onChange={onDateRangeChange}
+					value={dateRange}
+					disableClock={true}
+					calendarIcon={null}
+					clearIcon={null}
+				/>
+				<TimeRange
+					onChange={onTimeRangeChange}
+					value={timeRange}
+					disableClock={true}
+					calendarIcon={null}
+					clearIcon={null}
+				/>
+			</div>
 			<div className={styles.filterControls}>
 				<button className={classnames(styles.cntlBtn, styles.primaryBtn)}
 					onClick={onFilter}>

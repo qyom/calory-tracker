@@ -16,7 +16,8 @@ import moment from 'moment';
 
 class Meals extends Component {
 	state = {
-		dateTimeRange: [null, null],
+		dateRange: null,
+		timeRange: null,
 		intake_date_from: null,
 		intake_date_to: null,
 		intake_hours_from: null,
@@ -61,27 +62,30 @@ class Meals extends Component {
 		);
 	}
 
-	onFilterChange = dateTimeRange => {
-		console.log('dateTimeRange', dateTimeRange);
-		const from = dateTimeRange[0],
-			to = dateTimeRange[1],
-			intake_date_from = moment(from).format('YYYY-MM-DD'),
-			intake_date_to = moment(from).format('YYYY-MM-DD'),
-			intake_hours_from = from.getHours(),
-			intake_hours_to = to.getHours();
-		this.setState(
-			{
-				dateTimeRange,
-				intake_date_from,
-				intake_date_to,
-				intake_hours_from,
-				intake_hours_to,
-			},
-			() => {
-				console.log('STATE---', this.state);
-			},
-		);
-	};
+	onDateRangeChange = dateRange => {
+		const from =  dateRange && dateRange[0],
+			to = dateRange && dateRange[1]; 
+		const intake_date_from = from && moment(from).format('YYYY-MM-DD'),
+			intake_date_to = to && moment(to).format('YYYY-MM-DD');
+		this.setState({intake_date_from, intake_date_to, dateRange});
+	}
+
+	getHour(hour){
+		if(hour[0] === '0') {
+			hour = hour.slice(1, 2);
+		} else {
+			hour = hour.slice(0, 2);
+		}
+		return hour;
+	}
+
+	onTimeRangeChange = timeRange => {
+		const from = timeRange && timeRange[0],
+			to = timeRange && timeRange[1];
+		const intake_hours_from = from && this.getHour(from),
+			intake_hours_to = to && this.getHour(to);
+		this.setState({intake_hours_from, intake_hours_to, timeRange})
+	}
 
 	resetFilter = () => {
 		this.setState({
@@ -89,7 +93,8 @@ class Meals extends Component {
 			intake_date_to: null,
 			intake_hours_from: null,
 			intake_hours_to: null,
-			dateTimeRange: [null, null],
+			dateRange: null,
+			timeRange: null
 		});
 	};
 
@@ -100,7 +105,7 @@ class Meals extends Component {
 			intake_hours_from,
 			intake_hours_to,
 		} = this.state;
-		console.log('CALL FILTER API');
+		console.log('CALL FILTER API', intake_date_from +'/' +intake_date_to, intake_hours_from + '-' +intake_hours_to );
 	};
 
 	render() {
@@ -120,8 +125,10 @@ class Meals extends Component {
 					<Link to={`/members/${member.memberId}`}>(View account)</Link>
 				</ViewHeader>
 				<DateTimeRangeFilter
-					onFilterChange={this.onFilterChange}
-					dateTimeRange={this.state.dateTimeRange}
+					onDateRangeChange={this.onDateRangeChange}
+					onTimeRangeChange={this.onTimeRangeChange}
+					dateRange={this.state.dateRange}
+					timeRange={this.state.timeRange}
 					onFilter={this.filterMeals}
 					onReset={this.resetFilter}
 				/>

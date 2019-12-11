@@ -3,16 +3,25 @@
 
 .Filters {
 	text-align: right;
-	margin: 40px 0 20px;
+	margin: 90px 0 20px;
 	position: relative;
 }
 
-.labelGroup {
-	width: 390px;
-	position: absolute;
+.DateTimeFilterGroup {
+	display: inline-block;
+}
+
+.labelGroup, .labelSecondaryGroup {
+	width: 500px;
+    position: absolute;
+    top: -40px;
+    right: 145px;
+    color: #999999;
+    margin-bottom: 10px;
+}
+
+.labelSecondaryGroup{
 	top: -20px;
-	right: 150px;
-	color: #999999;
 }
 
 .filterLabel {
@@ -21,6 +30,42 @@
 	text-align: center;
 }
 
+.filterLabelDate {
+	width: 50%;
+	float: left;
+}
+
+.filterLabelTime {
+	width: 50%
+}
+
 .filterControls {
 	display: inline-block;
+}
+
+
+@media screen and (max-width: 680px) {
+	.Filters {
+		text-align: center;
+	}
+	.labelGroup, .labelSecondaryGroup {
+		width: 100%;
+		right: 0;
+	}
+	.filterControls {
+		margin: 20px 150px 0;
+	}
+}
+
+
+@media screen and (max-width: 525px) {
+	.Filters {
+		margin-top: 50px;
+	}
+	.labelGroup, .labelSecondaryGroup {
+		display: none
+	}
+	.filterControls {
+		 margin: 20px 30px 0;
+	}
 }

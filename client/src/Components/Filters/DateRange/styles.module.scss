@@ -1,0 +1,18 @@
+.DateRange {
+	display: inline-block;
+	margin-right: 20px;
+}
+
+
+@media screen and (max-width: 525px) {
+	.DateRange {
+		display: block;
+		margin: 0 0 20px;
+	}
+
+	.DateRange::before {
+		content: 'Date';
+		margin-right: 10px;
+		color: #999999;
+	}
+}
