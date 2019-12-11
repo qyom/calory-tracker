@@ -7,6 +7,7 @@ import ControlledFields from 'Components/ControlledFields';
 import fieldConfigs from './fieldConfigs';
 import getRelevantMemberValues from 'Utils/getRelevantMemberValues';
 import ViewHeader from 'Components/ViewHeader';
+import Spinner from 'Components/Spinner';
 import classnames from 'classnames';
 import { ROLE_TYPES } from 'Utils/getIfAllowed';
 import styles from './styles.module.scss';
@@ -32,6 +33,7 @@ class Signup extends Component {
 	};
 
 	render() {
+		const { isLoading } = this.props
 		if (this.props.isAuthenticated) {
 			return <Redirect to="/" />;
 		}
@@ -57,11 +59,10 @@ class Signup extends Component {
 						this.setupFieldsDataExternalControlers
 					}
 				/>
-				<button
-					className={classnames(styles.primaryBtn, styles.cntlBtn)}
+				<button className={classnames(isLoading ? styles.activeBtn : styles.primaryBtn, styles.cntlBtn)} 
 					onClick={this.handleSubmit}
 				>
-					Submit
+					{isLoading ? <Spinner small={true} /> : 'Submit' }
 				</button>
 			</div>
 		);
@@ -69,6 +70,6 @@ class Signup extends Component {
 }
 
 function mapStateToPros({ user }) {
-	return { isAuthenticated: !!user.data };
+	return { isAuthenticated: !!user.data, isLoading: user.isLoading };
 }
 export default connect(mapStateToPros, { authUser, createUser })(Signup);

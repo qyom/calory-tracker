@@ -4,6 +4,7 @@ import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { authUser } from 'Actions';
 import ViewHeader from 'Components/ViewHeader';
+import Spinner from 'Components/Spinner';
 import classnames from 'classnames';
 
 import styles from './styles.module.scss';
@@ -33,6 +34,7 @@ class Login extends Component {
 			return <Redirect to="/" />;
 		}
 		const { email, password } = this.state;
+		const { isLoading } = this.props;
 		return (
 			<div className={styles.FormPage}>
 				<ViewHeader>
@@ -55,9 +57,9 @@ class Login extends Component {
 							/>
 						</label>
 					</div>
-					<button className={classnames(styles.primaryBtn, styles.cntlBtn)} 
+					<button className={classnames(isLoading ? styles.activeBtn : styles.primaryBtn, styles.cntlBtn)} 
 						type="submit">
-						Sign In
+						{isLoading ? <Spinner small={true} /> : 'Sign In'}
 					</button>
 				</form>
 			</div>
@@ -66,6 +68,6 @@ class Login extends Component {
 }
 
 function mapStateToPros({ user }) {
-	return { isAuthenticated: !!user.data };
+	return { isAuthenticated: !!user.data, isLoading: user.isLoading};
 }
 export default connect(mapStateToPros, { authUser })(Login);

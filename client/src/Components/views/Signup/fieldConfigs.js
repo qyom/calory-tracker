@@ -34,21 +34,13 @@ export default [
 		type: 'password',
 		label: 'password',
 		isValueHidden: true,
-<<<<<<< Updated upstream
 		defaultValue: 'pass123',
-=======
-		defaultValue: 'pass',
->>>>>>> Stashed changes
 	},
 	{
 		name: 'confirmPassword',
 		type: 'password',
 		label: 'confirm password',
 		isValueHidden: true,
-<<<<<<< Updated upstream
 		defaultValue: 'pass123',
-=======
-		defaultValue: 'pass',
->>>>>>> Stashed changes
 	},
 ];
