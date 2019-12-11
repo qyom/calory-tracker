@@ -8,7 +8,7 @@ export const initialState = {
 		first_name: 'Gail',
 		last_name: 'Nitzsche',
 		max_calories_per_day: 1906,
-		member_id: 2,
+		member_id: 211,
 		role_type: 'ADMIN',
 		email: 'gail.nitzsche@cal.com',
 	}),

@@ -8,6 +8,7 @@ import fieldConfigs from './fieldConfigs';
 import ViewHeader from 'Components/ViewHeader';
 import { fetchMember, deleteMember, unAuthUser, updateMember } from 'Actions';
 import ControlledFields from 'Components/ControlledFields';
+import getRelevantMemberValues from 'Utils/getRelevantMemberValues';
 
 export const memberPropTypes = PropTypes.shape({
 	firstName: PropTypes.string.isRequired,
@@ -28,23 +29,8 @@ class Account extends Component {
 		}).isRequired,
 	};
 
-	constructor(props) {
-		super(props);
-
-		// const { firstName, lastName, maxCaloriesPerDay, email, memberId } =
-		// 	props.member || {};
-
-		this.state = {
-			isEditMode: false,
-			// firstName,
-			// lastName,
-			// email,
-			// maxCaloriesPerDay,
-			// memberId,
-		};
-	}
-
-	setupGetFieldsData = (getFieldsData, setFieldsData) => {
+	state = { isEditMode: false };
+	setupFieldsDataExternalControlers = (getFieldsData, setFieldsData) => {
 		this.getFieldsData = getFieldsData;
 		this.setFieldsData = setFieldsData;
 	};
@@ -76,27 +62,7 @@ class Account extends Component {
 		// 	});
 		// }
 	}
-	getRelevantMemberValues(member) {
-		const {
-			firstName,
-			lastName,
-			maxCaloriesPerDay,
-			email,
-			memberId,
-			password,
-			confirmPassword,
-		} = member;
 
-		return {
-			firstName,
-			lastName,
-			maxCaloriesPerDay,
-			email,
-			memberId,
-			password,
-			confirmPassword,
-		};
-	}
 	toggleEditMode = () => {
 		this.setState(state => {
 			return { isEditMode: !state.isEditMode };
@@ -111,19 +77,15 @@ class Account extends Component {
 	handleCancelClick = event => {
 		event.preventDefault();
 
-		const relevantMemberValues = this.getRelevantMemberValues(
-			this.props.member,
-		);
+		const relevantMemberValues = getRelevantMemberValues(this.props.member);
 		this.setFieldsData(relevantMemberValues, this.toggleEditMode);
 	};
 
 	handleSaveClick = event => {
 		event.preventDefault();
 		const updatedMemberState = this.getFieldsData();
-		const relevantMemberValues = this.getRelevantMemberValues(
-			updatedMemberState,
-		);
-
+		const relevantMemberValues = getRelevantMemberValues(updatedMemberState);
+		// const updatedMember = { ...this.props.member, ...relevantMemberValues };
 		this.props.updateMember(relevantMemberValues);
 
 		this.toggleEditMode();
@@ -162,7 +124,7 @@ class Account extends Component {
 		}
 
 		return (
-			<div>
+			<div className={styles.Account}>
 				<ViewHeader>
 					{headerMessage}
 					<Link to={`/meals/${memberId}`}>(View meals)</Link>
@@ -171,7 +133,9 @@ class Account extends Component {
 					fieldConfigs={fieldConfigs}
 					fieldValues={{ ...member, password: '', confirmPassword: '' }}
 					isEditMode={isEditMode}
-					setupGetFieldsData={this.setupGetFieldsData}
+					setupFieldsDataExternalControlers={
+						this.setupFieldsDataExternalControlers
+					}
 				/>
 				{!isEditMode && <button onClick={this.handleEditClick}>Edit</button>}
 				{isEditMode && <button onClick={this.handleSaveClick}>Save</button>}

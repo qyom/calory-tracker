@@ -40,8 +40,8 @@ export function denormalizeMember(member) {
 		first_name: String(member.firstName),
 		last_name: String(member.lastName),
 		max_calories_per_day: Number(member.maxCaloriesPerDay),
-		created_at: String(member.createdAt),
-		updated_at: String(member.updatedAt),
+		created_at: new Date(member.createdAt),
+		updated_at: new Date(member.updatedAt),
 		password: String(member.password),
 		confirm_password: String(member.confirmPassword),
 	};

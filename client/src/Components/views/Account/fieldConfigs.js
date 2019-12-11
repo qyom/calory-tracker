@@ -2,33 +2,38 @@ export default [
 	{
 		name: 'firstName',
 		type: 'text',
-		placeholder: 'first name',
+		label: 'first name',
 	},
 	{
 		name: 'lastName',
 		type: 'text',
-		placeholder: 'last name',
+		label: 'last name',
 	},
 	{
 		name: 'maxCaloriesPerDay',
 		type: 'number',
-		placeholder: 'max calories',
+		label: 'max calories',
 	},
 	{
 		name: 'email',
 		type: 'email',
-		placeholder: 'email',
+		label: 'email',
+	},
+	{
+		name: 'roleType',
+		type: 'select',
+		label: 'role type',
 	},
 	{
 		name: 'password',
 		type: 'password',
-		placeholder: 'password',
+		label: 'password',
 		isValueHidden: true,
 	},
 	{
 		name: 'confirmPassword',
 		type: 'password',
-		placeholder: 'confirm password',
+		label: 'confirm password',
 		isValueHidden: true,
 	},
 ];

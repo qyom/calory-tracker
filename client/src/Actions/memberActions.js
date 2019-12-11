@@ -116,3 +116,31 @@ export function deleteMember({ memberId, isDeletingSelf }) {
 		}
 	};
 }
+
+export function createMember(member = {}) {
+	console.log('creating member: ');
+	const token = localStorage.getItem('token');
+
+	return async function _dispatcher_(dispatch) {
+		try {
+			const denormalizedMember = denormalizeMember(member);
+			const res = await axiosApi({
+				method: 'post',
+				url: `/member`,
+				headers: { 'x-auth': token },
+				data: denormalizedMember,
+			});
+
+			const normalizedMember = normalizeMember(res.data);
+			dispatch({
+				type: ADD_MEMBER,
+				payload: { member: normalizedMember },
+			});
+		} catch (err) {
+			console.log('problem while fetching data: ', err);
+			// if (err.response.status === 401) {
+			// 	signoutUser(dispatch);
+			// }
+		}
+	};
+}
