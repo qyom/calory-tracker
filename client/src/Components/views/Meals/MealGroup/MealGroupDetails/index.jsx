@@ -8,7 +8,7 @@ export default function MealGroupDetails(props) {
 	return (
 		<div className={styles.MealGroupDetails}>
 			{meals.map(meal => (
-				<Meal {...meal} key={meal.mealId} />
+				<Meal meal={meal} key={meal.mealId} />
 			))}
 		</div>
 	);

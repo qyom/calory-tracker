@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import styles from './styles.module.scss';
 import Spinner from 'Components/Spinner';
 import { updateMember } from 'Actions/memberActions';
 import fieldConfigs from './fieldConfigs';
 import ViewHeader from 'Components/ViewHeader';
-import { fetchMember } from 'Actions';
+import { fetchMember, deleteMember, unAuthUser } from 'Actions';
 
 export const memberPropTypes = PropTypes.shape({
 	firstName: PropTypes.string.isRequired,
@@ -43,7 +43,6 @@ class Account extends Component {
 			memberId,
 		};
 	}
-
 	componentDidMount() {
 		const { fetchMember, member, match } = this.props;
 		if (!member) {
@@ -53,7 +52,8 @@ class Account extends Component {
 	}
 	componentDidUpdate(prevProps) {
 		const { member } = this.props;
-		if (member && member !== prevProps.member) {
+		const isMemberUpdated = member && member !== prevProps.member;
+		if (isMemberUpdated) {
 			const {
 				firstName,
 				lastName,
@@ -116,9 +116,13 @@ class Account extends Component {
 
 	handleDeleteClick = event => {
 		event.preventDefault();
+		const { memberId } = this.state;
+		const { userId } = this.props;
+		const isDeletingSelf = memberId === userId;
+		this.props.deleteMember({ memberId, isDeletingSelf });
 	};
 
-	handleFieldChange = (event, config) => {
+	handleFieldChange = (config, event) => {
 		this.setState({
 			[config.name]: event.target.value,
 		});
@@ -141,7 +145,7 @@ class Account extends Component {
 							placeholder={placeholder}
 							value={fieldValue}
 							onChange={event => {
-								this.handleFieldChange(event, config);
+								this.handleFieldChange(config, event);
 							}}
 						/>
 					) : (
@@ -154,14 +158,23 @@ class Account extends Component {
 		return fieldSets;
 	}
 
+	previousMember = this.props.member;
+
 	render() {
-		const { userId } = this.props;
+		const { userId, member } = this.props;
+		const isMemberDeleted = this.previousMember && !member;
 
-		const { isEditMode, firstName, lastName, memberId } = this.state;
+		if (isMemberDeleted) {
+			return <Redirect to="/members" />;
+		} else {
+			this.previousMember = member;
+		}
 
-		if (!memberId) {
+		if (!member) {
 			return <Spinner />;
 		}
+
+		const { isEditMode, firstName, lastName, memberId } = this.state;
 
 		let headerMessage = `${firstName} ${lastName}'s account`;
 		if (memberId === userId) {
@@ -190,4 +203,9 @@ function mapStateToProps(state, ownProps) {
 	const member = members.find(member => member.memberId === routeMemberId);
 	return { member, userId: user.data.memberId };
 }
-export default connect(mapStateToProps, { updateMember, fetchMember })(Account);
+export default connect(mapStateToProps, {
+	updateMember,
+	fetchMember,
+	deleteMember,
+	unAuthUser,
+})(Account);

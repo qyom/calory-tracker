@@ -10,7 +10,7 @@ import getIfAllowed, {
 	RESOURCE_TYPES,
 } from 'Utils/getIfAllowed';
 import styles from './styles.module.scss';
-import { unAuthUser } from 'Actions/authActions';
+import { unAuthUser } from 'Actions';
 
 class TopBar extends Component {
 	static = {

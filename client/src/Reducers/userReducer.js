@@ -5,12 +5,12 @@ export const initialState = {
 	isLoading: false,
 	error: null,
 	data: normalizeMember({
-		first_name: 'Augusta',
-		last_name: 'Ziemann',
-		max_calories_per_day: 1557,
+		first_name: 'Gail',
+		last_name: 'Nitzsche',
+		max_calories_per_day: 1906,
 		member_id: 2,
 		role_type: 'ADMIN',
-		email: 'augusta.ziemann@cal.com',
+		email: 'gail.nitzsche@cal.com',
 	}),
 };
 // export const initialState = {
@@ -38,6 +38,7 @@ export default function mealsReducer(state = initialState, action) {
 			return { isLoading: true, error: null, data: null };
 		}
 		case UNAUTH_USER.FINISH: {
+			// todo - if time permits, reset all states to their initial forms on logout
 			return { isLoading: false, error: null, data: null };
 		}
 		case UNAUTH_USER.ERROR: {

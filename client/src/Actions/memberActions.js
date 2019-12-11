@@ -1,6 +1,12 @@
-import { SET_MEMBER, SET_MEMBERS, ADD_MEMBER } from 'Constants/actionTypes';
+import {
+	SET_MEMBER,
+	SET_MEMBERS,
+	ADD_MEMBER,
+	DELETE_MEMBER,
+} from 'Constants/actionTypes';
 import axiosApi from 'Axios/axiosApi.js';
 import { normalizeMember, denormalizeMember } from 'Utils/normalizers';
+import { unAuthUser } from 'Actions';
 
 export function fetchMembers() {
 	console.log('fetching members: ');
@@ -73,6 +79,35 @@ export function updateMember(member = {}) {
 				type: SET_MEMBER,
 				payload: { member: normalizedMember },
 			});
+		} catch (err) {
+			console.log('problem while fetching data: ', err);
+			// if (err.response.status === 401) {
+			// 	signoutUser(dispatch);
+			// }
+		}
+	};
+}
+
+export function deleteMember({ memberId, isDeletingSelf }) {
+	console.log('updating member: ');
+	const token = localStorage.getItem('token');
+
+	return async function _dispatcher_(dispatch) {
+		try {
+			const res = await axiosApi({
+				method: 'delete',
+				url: `/member/${memberId}`,
+				headers: { 'x-auth': token },
+			});
+
+			if (isDeletingSelf) {
+				dispatch(unAuthUser());
+			} else {
+				dispatch({
+					type: DELETE_MEMBER,
+					payload: { memberId },
+				});
+			}
 		} catch (err) {
 			console.log('problem while fetching data: ', err);
 			// if (err.response.status === 401) {

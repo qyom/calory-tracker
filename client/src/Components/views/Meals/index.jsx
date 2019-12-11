@@ -15,16 +15,13 @@ import { mealPropTypes } from 'Components/views/Meals/MealGroup/MealGroupDetails
 import moment from 'moment';
 
 class Meals extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			dateTimeRange: [null, null],
-			intake_date_from: null,
-			intake_date_to: null,
-			intake_hours_from: null,
-			intake_hours_to: null,
-		};
-	}
+	state = {
+		dateTimeRange: [null, null],
+		intake_date_from: null,
+		intake_date_to: null,
+		intake_hours_from: null,
+		intake_hours_to: null,
+	};
 
 	static propTypes = {
 		meals: PropTypes.arrayOf(mealPropTypes),
