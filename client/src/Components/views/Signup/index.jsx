@@ -6,7 +6,8 @@ import { authUser, createMember } from 'Actions';
 import ControlledFields from 'Components/ControlledFields';
 import fieldConfigs from 'Components/views/Account/fieldConfigs';
 import getRelevantMemberValues from 'Utils/getRelevantMemberValues';
-
+import ViewHeader from 'Components/ViewHeader';
+import classnames from 'classnames';
 import styles from './styles.module.scss';
 
 class Login extends Component {
@@ -33,8 +34,10 @@ class Login extends Component {
 			return <Redirect to="/" />;
 		}
 		return (
-			<div>
-				<h1 className={styles.header}>Log In</h1>
+			<div className={styles.FormPage}>
+				<ViewHeader>
+					Sign Up
+				</ViewHeader>
 				<ControlledFields
 					fieldConfigs={fieldConfigs}
 					// fieldValues={
@@ -54,7 +57,10 @@ class Login extends Component {
 						this.setupFieldsDataExternalControlers
 					}
 				/>
-				<button onClick={this.handleSubmit}>Submit</button>
+				<button className={classnames(styles.primaryBtn, styles.cntlBtn)}
+					onClick={this.handleSubmit}>
+					Submit
+				</button>
 			</div>
 		);
 	}

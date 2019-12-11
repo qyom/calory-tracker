@@ -106,3 +106,32 @@
 		float: right;
 	}
 }
+
+@mixin formPage {
+	.FormPage {
+		max-width: 500px;
+		margin: 30px auto;
+	}
+	
+	.label {
+		display: block;
+		&:not(:last-child) {
+			margin-bottom: 10px;
+		}
+	}	
+
+	.labelName {
+		display: block;
+		margin-bottom: 5px;
+	}
+
+	.input {
+		padding: 5px 10px;
+		width: 100%;
+		display: block;
+		box-sizing: border-box;
+		font-size: 14px;
+		outline: none;
+	}
+
+}

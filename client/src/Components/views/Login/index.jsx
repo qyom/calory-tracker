@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { authUser } from 'Actions';
+import ViewHeader from 'Components/ViewHeader';
+import classnames from 'classnames';
 
 import styles from './styles.module.scss';
 
@@ -32,34 +34,31 @@ class Login extends Component {
 		}
 		const { email, password } = this.state;
 		return (
-			<div>
-				<h1 className={styles.header}>Log In</h1>
+			<div className={styles.FormPage}>
+				<ViewHeader>
+					Log In
+				</ViewHeader>
 				<form action="" onSubmit={this.handleSubmit} className={styles.form}>
 					<div className={styles.inputGroup}>
-						<label htmlFor="email" className={styles.inputLabel}>
-							Email
+						<label htmlFor="email" className={styles.label}>
+							<span className={styles.labelName}> Email </span>
+							<input type="email" name="email" id="email" value={email}
+								onChange={this.handleEmailChange} className={styles.input}
+							/>
 						</label>
-						<input
-							type="email"
-							name="email"
-							id="email"
-							onChange={this.handleEmailChange}
-							value={email}
-						/>
 					</div>
 					<div className={styles.inputGroup}>
-						<label htmlFor="password" className={styles.inputLabel}>
-							Password
+						<label htmlFor="password" className={styles.label}>
+							<span className={styles.labelName}>Password</span>
+							<input type="password" name="password" id="password" value={password} 
+								onChange={this.handlePasswordChange} className={styles.input}
+							/>
 						</label>
-						<input
-							type="password"
-							name="password"
-							id="password"
-							onChange={this.handlePasswordChange}
-							value={password}
-						/>
 					</div>
-					<button type="submit">Sign In</button>
+					<button className={classnames(styles.primaryBtn, styles.cntlBtn)} 
+						type="submit">
+						Sign In
+					</button>
 				</form>
 			</div>
 		);
