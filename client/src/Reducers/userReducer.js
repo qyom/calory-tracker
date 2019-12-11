@@ -14,9 +14,9 @@ export const initialState = {
 	}),
 };
 // export const initialState = {
-//     isLoading: false,
-//     error: null,
-//     data: null,
+// 	isLoading: false,
+// 	error: null,
+// 	data: null,
 // };
 
 export default function mealsReducer(state = initialState, action) {

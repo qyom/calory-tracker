@@ -42,5 +42,7 @@ export function denormalizeMember(member) {
 		max_calories_per_day: Number(member.maxCaloriesPerDay),
 		created_at: String(member.createdAt),
 		updated_at: String(member.updatedAt),
+		password: String(member.password),
+		confirm_password: String(member.confirmPassword),
 	};
 }

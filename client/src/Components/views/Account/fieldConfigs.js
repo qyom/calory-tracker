@@ -1,22 +1,34 @@
 export default [
 	{
 		name: 'firstName',
-		type: 'string',
+		type: 'text',
 		placeholder: 'first name',
 	},
 	{
 		name: 'lastName',
-		type: 'string',
+		type: 'text',
 		placeholder: 'last name',
 	},
 	{
 		name: 'maxCaloriesPerDay',
 		type: 'number',
-		placeholder: 'maxs cals',
+		placeholder: 'max calories',
 	},
 	{
 		name: 'email',
-		type: 'string',
+		type: 'email',
 		placeholder: 'email',
+	},
+	{
+		name: 'password',
+		type: 'password',
+		placeholder: 'password',
+		isValueHidden: true,
+	},
+	{
+		name: 'confirmPassword',
+		type: 'password',
+		placeholder: 'confirm password',
+		isValueHidden: true,
 	},
 ];

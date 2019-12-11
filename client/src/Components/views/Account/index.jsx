@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Link, Redirect } from 'react-router-dom';
 import styles from './styles.module.scss';
 import Spinner from 'Components/Spinner';
-import { updateMember } from 'Actions/memberActions';
 import fieldConfigs from './fieldConfigs';
 import ViewHeader from 'Components/ViewHeader';
-import { fetchMember, deleteMember, unAuthUser } from 'Actions';
+import { fetchMember, deleteMember, unAuthUser, updateMember } from 'Actions';
+import ControlledFields from 'Components/ControlledFields';
 
 export const memberPropTypes = PropTypes.shape({
 	firstName: PropTypes.string.isRequired,
@@ -31,18 +31,24 @@ class Account extends Component {
 	constructor(props) {
 		super(props);
 
-		const { firstName, lastName, maxCaloriesPerDay, email, memberId } =
-			props.member || {};
+		// const { firstName, lastName, maxCaloriesPerDay, email, memberId } =
+		// 	props.member || {};
 
 		this.state = {
 			isEditMode: false,
-			firstName,
-			lastName,
-			email,
-			maxCaloriesPerDay,
-			memberId,
+			// firstName,
+			// lastName,
+			// email,
+			// maxCaloriesPerDay,
+			// memberId,
 		};
 	}
+
+	setupGetFieldsData = (getFieldsData, setFieldsData) => {
+		this.getFieldsData = getFieldsData;
+		this.setFieldsData = setFieldsData;
+	};
+
 	componentDidMount() {
 		const { fetchMember, member, match } = this.props;
 		if (!member) {
@@ -51,32 +57,51 @@ class Account extends Component {
 		}
 	}
 	componentDidUpdate(prevProps) {
-		const { member } = this.props;
-		const isMemberUpdated = member && member !== prevProps.member;
-		if (isMemberUpdated) {
-			const {
-				firstName,
-				lastName,
-				maxCaloriesPerDay,
-				email,
-				memberId,
-			} = member;
-
-			this.setState({
-				firstName,
-				lastName,
-				email,
-				maxCaloriesPerDay,
-				memberId,
-			});
-		}
+		// const { member } = this.props;
+		// const isMemberUpdated = member && member !== prevProps.member;
+		// if (isMemberUpdated) {
+		// 	const {
+		// 		firstName,
+		// 		lastName,
+		// 		maxCaloriesPerDay,
+		// 		email,
+		// 		memberId,
+		// 	} = member;
+		// 	this.setState({
+		// 		firstName,
+		// 		lastName,
+		// 		email,
+		// 		maxCaloriesPerDay,
+		// 		memberId,
+		// 	});
+		// }
 	}
+	getRelevantMemberValues(member) {
+		const {
+			firstName,
+			lastName,
+			maxCaloriesPerDay,
+			email,
+			memberId,
+			password,
+			confirmPassword,
+		} = member;
 
-	toggleEditMode() {
+		return {
+			firstName,
+			lastName,
+			maxCaloriesPerDay,
+			email,
+			memberId,
+			password,
+			confirmPassword,
+		};
+	}
+	toggleEditMode = () => {
 		this.setState(state => {
 			return { isEditMode: !state.isEditMode };
 		});
-	}
+	};
 
 	handleEditClick = event => {
 		event.preventDefault();
@@ -85,78 +110,32 @@ class Account extends Component {
 
 	handleCancelClick = event => {
 		event.preventDefault();
-		const { firstName, lastName, maxCaloriesPerDay, email } =
-			this.props.member || {};
-		this.setState(
-			{ firstName, lastName, maxCaloriesPerDay, email },
-			this.toggleEditMode,
+
+		const relevantMemberValues = this.getRelevantMemberValues(
+			this.props.member,
 		);
+		this.setFieldsData(relevantMemberValues, this.toggleEditMode);
 	};
 
 	handleSaveClick = event => {
 		event.preventDefault();
-		const {
-			firstName,
-			lastName,
-			maxCaloriesPerDay,
-			email,
-			memberId,
-		} = this.state;
+		const updatedMemberState = this.getFieldsData();
+		const relevantMemberValues = this.getRelevantMemberValues(
+			updatedMemberState,
+		);
 
-		this.props.updateMember({
-			memberId,
-			firstName,
-			lastName,
-			maxCaloriesPerDay,
-			email,
-		});
+		this.props.updateMember(relevantMemberValues);
 
 		this.toggleEditMode();
 	};
 
 	handleDeleteClick = event => {
 		event.preventDefault();
-		const { memberId } = this.state;
-		const { userId } = this.props;
+		const { userId, member } = this.props;
+		const { memberId } = member;
 		const isDeletingSelf = memberId === userId;
 		this.props.deleteMember({ memberId, isDeletingSelf });
 	};
-
-	handleFieldChange = (config, event) => {
-		this.setState({
-			[config.name]: event.target.value,
-		});
-	};
-
-	renderFieldSets() {
-		const { isEditMode } = this.state;
-
-		const fieldSets = fieldConfigs.map(config => {
-			const { placeholder, type, name } = config;
-			const fieldValue = this.state[name];
-
-			return (
-				<div className={styles.fieldSet} key={name}>
-					<label className={styles.label}>{placeholder}:</label>
-					{isEditMode ? (
-						<input
-							type={type}
-							name={name}
-							placeholder={placeholder}
-							value={fieldValue}
-							onChange={event => {
-								this.handleFieldChange(config, event);
-							}}
-						/>
-					) : (
-						<span className={styles.value}>{fieldValue}</span>
-					)}
-				</div>
-			);
-		});
-
-		return fieldSets;
-	}
 
 	previousMember = this.props.member;
 
@@ -174,7 +153,8 @@ class Account extends Component {
 			return <Spinner />;
 		}
 
-		const { isEditMode, firstName, lastName, memberId } = this.state;
+		const { isEditMode } = this.state;
+		const { firstName, lastName, memberId } = this.props.member;
 
 		let headerMessage = `${firstName} ${lastName}'s account`;
 		if (memberId === userId) {
@@ -187,7 +167,12 @@ class Account extends Component {
 					{headerMessage}
 					<Link to={`/meals/${memberId}`}>(View meals)</Link>
 				</ViewHeader>
-				{this.renderFieldSets()}
+				<ControlledFields
+					fieldConfigs={fieldConfigs}
+					fieldValues={{ ...member, password: '', confirmPassword: '' }}
+					isEditMode={isEditMode}
+					setupGetFieldsData={this.setupGetFieldsData}
+				/>
 				{!isEditMode && <button onClick={this.handleEditClick}>Edit</button>}
 				{isEditMode && <button onClick={this.handleSaveClick}>Save</button>}
 				{isEditMode && <button onClick={this.handleCancelClick}>Cancel</button>}

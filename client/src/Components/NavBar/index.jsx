@@ -28,7 +28,10 @@ class TopBar extends Component {
 					<div className={styles.controls}></div>
 					<div className={styles.controls}>
 						<CustomNavLink to="/login" className={styles.controlsItem}>
-							Login
+							Log In
+						</CustomNavLink>
+						<CustomNavLink to="/signup" className={styles.controlsItem}>
+							Sign Up
 						</CustomNavLink>
 					</div>
 				</div>

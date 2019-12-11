@@ -3,7 +3,8 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import Meals from 'Components/views/Meals';
 import Members from 'Components/views/Members';
-import Login from 'Components/views/Login';
+import LogIn from 'Components/views/LogIn';
+import SignUp from 'Components/views/Signup';
 import Account from 'Components/views/Account';
 import Home from 'Components/views/Home';
 import NavBar from 'Components/NavBar';
@@ -17,7 +18,8 @@ function App() {
 				<div>
 					<NavBar />
 					<Switch>
-						<Route path="/login" component={Login} />
+						<Route path="/login" component={LogIn} />
+						<Route path="/signup" component={SignUp} />
 						<PrivateRoute
 							path="/members"
 							fallbackPath="/login"
