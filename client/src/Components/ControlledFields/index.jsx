@@ -78,6 +78,7 @@ export default class ControlFields extends Component {
 				label,
 				type = 'text',
 				name,
+				defaultValue,
 				...attributes
 			} = config;
 			const fieldValue = this.state[name];
@@ -99,6 +100,7 @@ export default class ControlFields extends Component {
 			} else if (isValueHidden) {
 				input = <span className={styles.box} />;
 			}
+
 			return (
 				<label className={styles.label} key={name}>
 					<span className={styles.labelName}>{label}</span>

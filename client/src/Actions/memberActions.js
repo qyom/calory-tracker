@@ -11,13 +11,10 @@ import { unAuthUser } from 'Actions';
 export function fetchMembers() {
 	console.log('fetching members: ');
 
-	const token = localStorage.getItem('token');
-
 	return async function _dispatcher_(dispatch) {
 		try {
-			const res = await axiosApi.get('/members', {
-				headers: { 'x-auth': token },
-			});
+			const res = await axiosApi.get('/members');
+
 			const normalizedMembers = res.data.map(normalizeMember);
 			dispatch({
 				type: SET_MEMBERS,
@@ -35,13 +32,9 @@ export function fetchMembers() {
 export function fetchMember({ memberId }) {
 	console.log('fetching members: ');
 
-	const token = localStorage.getItem('token');
-
 	return async function _dispatcher_(dispatch) {
 		try {
-			const res = await axiosApi.get(`/member/${memberId}`, {
-				headers: { 'x-auth': token },
-			});
+			const res = await axiosApi.get(`/member/${memberId}`);
 			const normalizedMember = normalizeMember(res.data);
 			dispatch({
 				type: ADD_MEMBER,
@@ -58,7 +51,7 @@ export function fetchMember({ memberId }) {
 
 export function updateMember(member = {}) {
 	console.log('updating member: ');
-	const token = localStorage.getItem('token');
+	// const token = localStorage.getItem('token');
 
 	return async function _dispatcher_(dispatch) {
 		try {
@@ -70,7 +63,7 @@ export function updateMember(member = {}) {
 			const res = await axiosApi({
 				method: 'put',
 				url: `/member/${memberId}`,
-				headers: { 'x-auth': token },
+				// headers: { 'x-auth': token },
 				data: denormalizedMember,
 			});
 			const normalizedMember = normalizeMember(res.data);
@@ -90,14 +83,14 @@ export function updateMember(member = {}) {
 
 export function deleteMember({ memberId, isDeletingSelf }) {
 	console.log('updating member: ');
-	const token = localStorage.getItem('token');
+	// const token = localStorage.getItem('token');
 
 	return async function _dispatcher_(dispatch) {
 		try {
 			const res = await axiosApi({
 				method: 'delete',
 				url: `/member/${memberId}`,
-				headers: { 'x-auth': token },
+				// headers: { 'x-auth': token },
 			});
 
 			if (isDeletingSelf) {
@@ -119,7 +112,7 @@ export function deleteMember({ memberId, isDeletingSelf }) {
 
 export function createMember(member = {}) {
 	console.log('creating member: ');
-	const token = localStorage.getItem('token');
+	// const token = localStorage.getItem('token');
 
 	return async function _dispatcher_(dispatch) {
 		try {
@@ -127,7 +120,7 @@ export function createMember(member = {}) {
 			const res = await axiosApi({
 				method: 'post',
 				url: `/member`,
-				headers: { 'x-auth': token },
+				// headers: { 'x-auth': token },
 				data: denormalizedMember,
 			});
 

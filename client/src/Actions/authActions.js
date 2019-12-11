@@ -1,5 +1,10 @@
 import axiosApi from 'Axios/axiosApi.js';
-import { AUTH_USER, UNAUTH_USER } from 'Constants/actionTypes';
+import {
+	AUTH_USER,
+	UNAUTH_USER,
+	CREATE_USER,
+	ADD_MEMBER,
+} from 'Constants/actionTypes';
 import { normalizeMember, denormalizeMember } from 'Utils/normalizers';
 
 export function authUser({ email, password }) {
@@ -12,19 +17,67 @@ export function authUser({ email, password }) {
 				url: '/auth',
 				data: { email, password },
 			});
-			// console.log(res.data["x-auth"]);
-			const member = normalizeMember(res.data.member);
-			dispatch({
-				type: AUTH_USER.FINISH,
-				payload: { member },
-			});
-			localStorage.setItem('token', res.data['x-auth']);
-			// redirect();
+
+			localStorage.setItem('jwt', res.data.token);
+			const normalizedMember = normalizeMember(res.data.member);
+
+			setUser(dispatch, normalizedMember);
 		} catch (err) {
 			console.log(err);
 			dispatch({ type: AUTH_USER.ERROR, payload: err });
 		}
 	};
+}
+
+export function fetchUser() {
+	// console.log("authUser");
+	return async function _dispatcher_(dispatch) {
+		try {
+			dispatch({ type: AUTH_USER.START });
+			const res = await axiosApi.get('/auth');
+
+			const normalizedMember = normalizeMember(res.data);
+
+			setUser(dispatch, normalizedMember);
+		} catch (err) {
+			console.log(err);
+			dispatch({ type: AUTH_USER.ERROR, payload: err });
+		}
+	};
+}
+
+export function createUser(member = {}) {
+	// console.log('creatUser');
+	return async function _dispatcher_(dispatch) {
+		try {
+			dispatch({ type: CREATE_USER.START });
+			const denormalizedMember = denormalizeMember(member);
+			const res = await axiosApi({
+				method: 'post',
+				url: `/member`,
+				data: denormalizedMember,
+			});
+
+			localStorage.setItem('jwt', res.data.token);
+			const normalizedMember = normalizeMember(res.data.member);
+
+			setUser(dispatch, normalizedMember);
+		} catch (err) {
+			// console.log(err);
+			dispatch({ type: CREATE_USER.ERROR, payload: err });
+		}
+	};
+}
+
+function setUser(dispatch, member) {
+	dispatch({
+		type: ADD_MEMBER,
+		payload: { member },
+	});
+	dispatch({
+		type: AUTH_USER.FINISH,
+		payload: { member },
+	});
 }
 
 // function signoutUser(dispatch) {
@@ -39,8 +92,8 @@ export function unAuthUser() {
 			await axiosApi({
 				method: 'delete',
 				url: '/auth',
-				// headers: { 'x-auth': localStorage.getItem('token') },
 			});
+			localStorage.removeItem('jwt');
 			dispatch({ type: UNAUTH_USER.FINISH });
 			// localStorage.removeItem('token');
 			// // signoutUser(dispatch);

@@ -90,7 +90,6 @@ class Members extends Component {
 				<Modal
 					isVisible={isModalVisible}
 					title={'Create New User'}
-					// body={this.generateAddMemberForm()}
 					body={
 						<ControlledFields
 							fieldConfigs={fieldConfigs}

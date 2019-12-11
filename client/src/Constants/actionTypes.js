@@ -19,3 +19,9 @@ export const UNAUTH_USER = Object.freeze({
 	FINISH: 'UNAUTH_USER_FINISH',
 	ERROR: 'UNAUTH_USER_ERROR',
 });
+
+export const CREATE_USER = Object.freeze({
+	START: 'CREATE_USER_START',
+	FINISH: 'CREATE_USER_FINISH',
+	ERROR: 'CREATE_USER_ERROR',
+});

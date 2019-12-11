@@ -43,6 +43,6 @@ export function denormalizeMember(member) {
 		created_at: new Date(member.createdAt),
 		updated_at: new Date(member.updatedAt),
 		password: String(member.password),
-		confirm_password: String(member.confirmPassword),
+		password_confirmation: String(member.confirmPassword),
 	};
 }

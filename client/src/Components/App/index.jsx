@@ -10,6 +10,12 @@ import Home from 'Components/views/Home';
 import NavBar from 'Components/NavBar';
 import store from 'Reducers/store.js';
 import PrivateRoute from 'Components/PrivateRoute';
+import { fetchUser } from 'Actions';
+
+const token = localStorage.getItem('jwt');
+if (token) {
+	store.dispatch(fetchUser());
+}
 
 function App() {
 	return (
@@ -22,13 +28,13 @@ function App() {
 						<Route path="/signup" component={SignUp} />
 						<PrivateRoute
 							path="/members"
-							fallbackPath="/login"
+							fallbackPath="/"
 							component={Members}
 							exact
 						/>
 						<PrivateRoute
 							path="/meals/:memberId"
-							fallbackPath="/login"
+							fallbackPath="/"
 							render={props => {
 								const { memberId } = props.match.params;
 								return <Meals {...props} key={memberId} />;
@@ -36,7 +42,7 @@ function App() {
 						/>
 						<PrivateRoute
 							path="/members/:memberId"
-							fallbackPath="/login"
+							fallbackPath="/"
 							render={props => {
 								const { memberId } = props.match.params;
 								return <Account {...props} key={memberId} />;

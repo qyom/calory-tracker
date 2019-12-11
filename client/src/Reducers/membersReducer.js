@@ -8,7 +8,8 @@ import {
 } from 'Constants/actionTypes';
 import { initialState as userInitialState } from './userReducer';
 
-const initialState = [userInitialState.data];
+// const initialState = [userInitialState.data];
+const initialState = [];
 
 export default function mealsReducer(state = initialState, action) {
 	switch (action.type) {

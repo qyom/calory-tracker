@@ -30,6 +30,7 @@ class Account extends Component {
 	};
 
 	state = { isEditMode: false };
+
 	setupFieldsDataExternalControlers = (getFieldsData, setFieldsData) => {
 		this.getFieldsData = getFieldsData;
 		this.setFieldsData = setFieldsData;

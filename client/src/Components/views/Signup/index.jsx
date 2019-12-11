@@ -2,31 +2,33 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { authUser, createMember } from 'Actions';
+import { authUser, createUser } from 'Actions';
 import ControlledFields from 'Components/ControlledFields';
-import fieldConfigs from 'Components/views/Account/fieldConfigs';
+import fieldConfigs from './fieldConfigs';
 import getRelevantMemberValues from 'Utils/getRelevantMemberValues';
 import ViewHeader from 'Components/ViewHeader';
 import classnames from 'classnames';
+import { ROLE_TYPES } from 'Utils/getIfAllowed';
 import styles from './styles.module.scss';
 
-class Login extends Component {
+class Signup extends Component {
 	static propTypes = {
 		isAuthenticated: PropTypes.bool.isRequired,
-		createMember: PropTypes.func.isRequired,
+		createUser: PropTypes.func.isRequired,
 	};
 
 	setupFieldsDataExternalControlers = (getFieldsData, setFieldsData) => {
 		this.getFieldsData = getFieldsData;
-		this.setFieldsData = setFieldsData;
+		// this.setFieldsData = setFieldsData;
 	};
 
 	handleSubmit = event => {
 		event.preventDefault();
 		const updatedMemberState = this.getFieldsData();
 		const relevantMemberValues = getRelevantMemberValues(updatedMemberState);
+		relevantMemberValues.roleType = ROLE_TYPES.REGULAR;
 		// const updatedMember = { ...this.props.member, ...relevantMemberValues };
-		this.props.createMember(relevantMemberValues);
+		this.props.createUser(relevantMemberValues);
 	};
 
 	render() {
@@ -35,9 +37,7 @@ class Login extends Component {
 		}
 		return (
 			<div className={styles.FormPage}>
-				<ViewHeader>
-					Sign Up
-				</ViewHeader>
+				<ViewHeader>Sign Up</ViewHeader>
 				<ControlledFields
 					fieldConfigs={fieldConfigs}
 					// fieldValues={
@@ -57,8 +57,10 @@ class Login extends Component {
 						this.setupFieldsDataExternalControlers
 					}
 				/>
-				<button className={classnames(styles.primaryBtn, styles.cntlBtn)}
-					onClick={this.handleSubmit}>
+				<button
+					className={classnames(styles.primaryBtn, styles.cntlBtn)}
+					onClick={this.handleSubmit}
+				>
 					Submit
 				</button>
 			</div>
@@ -69,4 +71,4 @@ class Login extends Component {
 function mapStateToPros({ user }) {
 	return { isAuthenticated: !!user.data };
 }
-export default connect(mapStateToPros, { authUser, createMember })(Login);
+export default connect(mapStateToPros, { authUser, createUser })(Signup);

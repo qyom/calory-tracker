@@ -1,4 +1,6 @@
 export default function getRelevantMemberValues(member) {
+	// this will make sure irrelevant fields like date_created
+	// don't end up on put request when updating the user
 	const {
 		firstName,
 		lastName,
