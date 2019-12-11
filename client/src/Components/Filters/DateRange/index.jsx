@@ -5,7 +5,6 @@ import './styles.scss'
 
 
 export default function(props) {
-		console.log('date rane val---', props.value)
 	return (
 		<div className={styles.DateRange}>
 

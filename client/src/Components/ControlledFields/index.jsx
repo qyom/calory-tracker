@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import styles from './styles.module.scss';
 import memberLike from 'PropTypes/memberLike';
+import DateTimePicker from 'react-datetime-picker';
+import moment from 'moment';
 
 import { isFunction } from 'lodash';
 import { attribute } from 'postcss-selector-parser';
@@ -65,7 +67,7 @@ export default class ControlFields extends Component {
 	}
 	handleFieldChange = (config, event) => {
 		this.setState({
-			[config.name]: event.target.value,
+			[config.name]: config.type === 'dateTime' ? event : event.target.value
 		});
 	};
 
@@ -81,8 +83,7 @@ export default class ControlFields extends Component {
 				defaultValue,
 				...attributes
 			} = config;
-			const fieldValue = this.state[name];
-
+			const fieldValue = this.state[name];		
 			let input = <span className={styles.value}>{fieldValue}</span>;
 			if (isEditMode) {
 				input = (
@@ -98,7 +99,22 @@ export default class ControlFields extends Component {
 					/>
 				);
 			} else if (isValueHidden) {
-				input = <span className={styles.box} />;
+				input = <span className={styles.value}> <span className={styles.box} /> </span>;
+			} 
+
+			if(type === 'dateTime') {
+				input = (
+					<DateTimePicker
+						className="detailInput"
+						value={fieldValue}
+						onChange={event => {
+							this.handleFieldChange(config, event);
+						}}
+						disableClock={true}
+						calendarIcon={null}
+						clearIcon={null}
+					/>
+				)
 			}
 
 			return (

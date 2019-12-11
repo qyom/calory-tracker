@@ -93,19 +93,6 @@ class Members extends Component {
 					body={
 						<ControlledFields
 							fieldConfigs={fieldConfigs}
-							// fieldValues={
-							// 	{
-							// 		// firstName: '',
-							// 		// lastName: '',
-							// 		// maxCaloriesPerDay: '',
-							// 		// email: '',
-							// 		// memberId: '',
-							// 		// password: '',
-							// 		// confirmPassword: '',
-							// 	}
-							// }
-							// fieldValues={{ ...member, password: '', confirmPassword: '' }}
-							// isEditMode={isEditMode}
 							setupFieldsDataExternalControlers={
 								this.setupFieldsDataExternalControlers
 							}

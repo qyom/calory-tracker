@@ -9,6 +9,7 @@ import ViewHeader from 'Components/ViewHeader';
 import { fetchMember, deleteMember, unAuthUser, updateMember } from 'Actions';
 import ControlledFields from 'Components/ControlledFields';
 import getRelevantMemberValues from 'Utils/getRelevantMemberValues';
+import classnames from 'classnames';
 
 export const memberPropTypes = PropTypes.shape({
 	firstName: PropTypes.string.isRequired,
@@ -128,7 +129,9 @@ class Account extends Component {
 			<div className={styles.Account}>
 				<ViewHeader>
 					{headerMessage}
-					<Link to={`/meals/${memberId}`}>(View meals)</Link>
+					<Link to={`/meals/${memberId}`} className={classnames(styles.linkBtn, styles.cntlBtn)}>
+						(View meals)
+					</Link>
 				</ViewHeader>
 				<ControlledFields
 					fieldConfigs={fieldConfigs}
@@ -138,10 +141,14 @@ class Account extends Component {
 						this.setupFieldsDataExternalControlers
 					}
 				/>
-				{!isEditMode && <button onClick={this.handleEditClick}>Edit</button>}
-				{isEditMode && <button onClick={this.handleSaveClick}>Save</button>}
-				{isEditMode && <button onClick={this.handleCancelClick}>Cancel</button>}
-				<button onClick={this.handleDeleteClick}>Delete</button>
+				{!isEditMode && <button className={classnames(styles.primaryBtn, styles.cntlBtn)}
+					onClick={this.handleEditClick}>Edit</button> }
+				{isEditMode && <button className={classnames(styles.primaryBtn, styles.cntlBtn)}
+					onClick={this.handleSaveClick}>Save</button>}
+				{isEditMode && <button className={classnames(styles.secondaryBtn, styles.cntlBtn)}
+					onClick={this.handleCancelClick}>Cancel</button>}
+				<button className={classnames(styles.secondaryBtn, styles.cntlBtn)}
+					onClick={this.handleDeleteClick}>Delete</button>
 			</div>
 		);
 	}

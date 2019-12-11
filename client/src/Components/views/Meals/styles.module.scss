@@ -1,3 +1,7 @@
+@import 'Mixins/mealsMixins.scss';
+@include buttons;
+@include pageCntls;
+
 .Meals {
 	width: 90%;
 	margin: 30px auto;

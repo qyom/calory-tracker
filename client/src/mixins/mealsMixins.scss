@@ -63,6 +63,17 @@
 	.secondaryBtn:hover {
 		background-color: #e2e2e2;
 	}
+
+	.linkBtn {
+		text-decoration: none;
+		color: #424242;
+		font-size: 16px;
+	}
+
+	.linkBtn:hover {
+		text-decoration: underline;
+		color: #999999;
+	}
 }
 
 @mixin tables {
@@ -123,6 +134,7 @@
 	.labelName {
 		display: block;
 		margin-bottom: 5px;
+		color: #999999;
 	}
 
 	.input {

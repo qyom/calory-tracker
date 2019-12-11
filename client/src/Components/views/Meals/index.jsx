@@ -4,6 +4,7 @@ import styles from './styles.module.scss';
 import { Link } from 'react-router-dom';
 import MealGroup from './MealGroup';
 import MealGroupHeaders from './MealGroupHeaders';
+import Modal from 'Components/Modals';
 import ViewHeader from 'Components/ViewHeader';
 import DateTimeRangeFilter from 'Components/Filters/DateTimeFilter';
 import groupMealsByPeriod from 'Utils/groupMealsByPeriod';
@@ -12,7 +13,10 @@ import { fetchMeals, fetchMember } from 'Actions';
 import PropTypes from 'prop-types';
 import { memberPropTypes } from 'Components/views/Account';
 import { mealPropTypes } from 'Components/views/Meals/MealGroup/MealGroupDetails/Meal';
+import ControlledFields from 'Components/ControlledFields';
+import fieldConfigs from 'Components/views/Meals/fieldConfigs';
 import moment from 'moment';
+import classnames from 'classnames';
 
 class Meals extends Component {
 	state = {
@@ -22,6 +26,7 @@ class Meals extends Component {
 		intake_date_to: null,
 		intake_hours_from: null,
 		intake_hours_to: null,
+		isModalVisible: false
 	};
 
 	static propTypes = {
@@ -105,7 +110,21 @@ class Meals extends Component {
 			intake_hours_from,
 			intake_hours_to,
 		} = this.state;
-		console.log('CALL FILTER API', intake_date_from +'/' +intake_date_to, intake_hours_from + '-' +intake_hours_to );
+		console.log('CALL FILTER API', intake_date_from +' / ' +intake_date_to, intake_hours_from + ' - ' +intake_hours_to );
+	};
+
+	toggleAddModal = () => {
+		const isModalVisible = !this.state.isModalVisible;
+		this.setState({ isModalVisible });
+	};
+
+	handleNewMealSubmit = () => {
+		const fieldData = this.getFieldsData;
+	}
+
+	setupFieldsDataExternalControlers = (getFieldsData, setFieldsData) => {
+		this.getFieldsData = getFieldsData;
+		this.setFieldsData = setFieldsData;
 	};
 
 	render() {
@@ -122,7 +141,17 @@ class Meals extends Component {
 			<div className={styles.Meals}>
 				<ViewHeader>
 					{headerMessage}
-					<Link to={`/members/${member.memberId}`}>(View account)</Link>
+					<Link to={`/members/${member.memberId}`} className={classnames(styles.linkBtn, styles.cntlBtn)}>
+						(View account)
+					</Link>
+					<div className={styles.pageCntls}>
+						<button
+							onClick={this.toggleAddModal}
+							className={classnames(styles.cntlBtn, styles.primaryBtn)}
+						>
+							Add Meal
+						</button>
+					</div>
 				</ViewHeader>
 				<DateTimeRangeFilter
 					onDateRangeChange={this.onDateRangeChange}
@@ -134,6 +163,22 @@ class Meals extends Component {
 				/>
 
 				{this.renderMealGroupList()}
+				<Modal
+					isVisible={this.state.isModalVisible}
+					title={'Add New Meal'}
+					body={
+						<ControlledFields
+							fieldConfigs={fieldConfigs}
+							setupFieldsDataExternalControlers={
+								this.setupFieldsDataExternalControlers
+							}
+						/>
+					}
+					controls={[
+						{ text: 'Add', primary: true, onClick: this.handleNewMealSubmit },
+						{ text: 'Cancel', onClick: this.toggleAddModal },
+					]}
+				/>
 			</div>
 		);
 	}
