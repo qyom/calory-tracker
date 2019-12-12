@@ -3,7 +3,6 @@ import {
 	AUTH_USER,
 	UNAUTH_USER,
 	CREATE_USER,
-	ADD_MEMBER,
 } from 'Constants/actionTypes';
 import { normalizeMember, denormalizeMember } from 'Utils/normalizers';
 import { addMemberToState } from 'Actions';
@@ -102,7 +101,7 @@ export function unAuthUser() {
 				url: '/auth',
 				headers: { Authorization: `Bearer ${jwt}` },
 			});
-			unAuthUserLocally();
+			unAuthUserLocally(dispatch);
 			// // signoutUser(dispatch);
 		} catch (err) {
 			console.log('error deleting token', err);

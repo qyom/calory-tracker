@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-import _ from "lodash";
+import _ from 'lodash';
 import { connect } from 'react-redux';
 import styles from './styles.module.scss';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import MealGroup from './MealGroup';
+import PropTypes from 'prop-types';
+import classnames from 'classnames';
 import MealGroupHeaders from './MealGroupHeaders';
 import Modal from 'Components/Modals';
 import ViewHeader from 'Components/ViewHeader';
@@ -11,13 +13,15 @@ import DateTimeRangeFilter from 'Components/Filters/DateTimeFilter';
 import groupMealsByPeriod from 'Utils/groupMealsByPeriod';
 import Spinner from 'Components/Spinner';
 import { fetchMeals, addMeal, fetchMember } from 'Actions';
-import PropTypes from 'prop-types';
 import { memberPropTypes } from 'Components/views/Account';
 import { mealPropTypes } from 'Components/views/Meals/MealGroup/MealGroupDetails/Meal';
 import ControlledFields from 'Components/ControlledFields';
 import fieldConfigs from 'Components/views/Meals/fieldConfigs';
 import moment from 'moment';
-import classnames from 'classnames';
+import getIfAllowed, {
+	OPERATION_TYPES,
+	RESOURCE_TYPES,
+} from 'Utils/getIfAllowed';
 
 class Meals extends Component {
 	state = {
@@ -27,7 +31,8 @@ class Meals extends Component {
 		intakeDateTo: null,
 		intakeHoursFrom: null,
 		intakeHoursTo: null,
-		isModalVisible: false
+		isModalVisible: false,
+		newMealWasAdded: false
 	};
 
 	static propTypes = {
@@ -39,7 +44,7 @@ class Meals extends Component {
 				memberId: PropTypes.string.isRequired,
 			}).isRequired,
 		}).isRequired,
-		userId: PropTypes.string.isRequired,
+		user: memberPropTypes,
 	};
 
 	componentDidMount() {
@@ -51,16 +56,21 @@ class Meals extends Component {
 		fetchMeals({ memberId });
 	}
 	componentDidUpdate(prevProps) {
-		const {processing, error} = this.props.control.add;
-		if (this.state.isModalVisible && prevProps.control.add.processing && !processing && _.isEmpty(error) ) {
+		const { processing, error } = this.props.control.add;
+		const newMealWasAdded = this.state.isModalVisible &&
+			prevProps.control.add.processing &&
+			!processing &&
+			_.isEmpty(error.data);
+		if (newMealWasAdded) {
 			this.toggleAddModal();
-		}
+			this.setState({newMealWasAdded});
+		}		
 	}
 
 	renderMealGroupList() {
 		const { meals, member } = this.props;
 		const mealGroups = groupMealsByPeriod(meals);
-		console.log('member---', member, 'meals -- ', meals)
+
 		return (
 			<ul className={styles.MealGroupList}>
 				<MealGroupHeaders />
@@ -74,6 +84,15 @@ class Meals extends Component {
 					/>
 				))}
 			</ul>
+		);
+	}
+
+	renderMessages()
+	{
+		return (
+			<div>
+			{this.state.newMealWasAdded ? <div className={styles.successMsg}>New meal was added!</div> : null}
+			</div>
 		);
 	}
 
@@ -146,22 +165,43 @@ class Meals extends Component {
 
 	handleNewMealSubmit = () => {
 		const fieldValues = this.getFieldValues();
-		console.log("submitting a new meal", fieldValues);
+		console.log('submitting a new meal', fieldValues);
 		this.props.addMeal(this.props.member, fieldValues);
-	}
+	};
 	setupFieldsDataExternalControlers = (getFieldValues, setFieldValues) => {
 		this.getFieldValues = getFieldValues;
 		this.setFieldValues = setFieldValues;
 	};
 
+	get isThisPageAllowed() {
+		const { user } = this.props;
+		const isSeeingOthersMealsAllowed = getIfAllowed({
+			role: user.roleType,
+			resource: RESOURCE_TYPES.MEAL,
+			operation: OPERATION_TYPES.READ,
+		});
+
+		return this.isMemberTheUser || isSeeingOthersMealsAllowed;
+	}
+
+	get isMemberTheUser() {
+		const { user, routeMemberId } = this.props;
+		return routeMemberId === user.memberId;
+	}
+
 	render() {
-		const { meals, member, userId, control } = this.props;
+		const { meals, member, control } = this.props;
+
+		if (!this.isThisPageAllowed) {
+			return <Redirect to={`/`} />;
+		}
+
 		if (!meals || !member) {
 			return <Spinner />;
 		}
 
 		let headerMessage = `${member.firstName} ${member.lastName}'s meals`;
-		if (member.memberId === userId) {
+		if (this.isMemberTheUser) {
 			headerMessage = 'My meals';
 		}
 		return (
@@ -182,6 +222,7 @@ class Meals extends Component {
 							Add Meal
 						</button>
 					</div>
+					{this.renderMessages()}
 				</ViewHeader>
 				<DateTimeRangeFilter
 					onDateRangeChange={this.onDateRangeChange}
@@ -205,7 +246,11 @@ class Meals extends Component {
 						/>
 					}
 					controls={[
-						{ text: 'Add', primary: true, onClick: this.handleNewMealSubmit },
+						{
+							text: 'Add',
+							primary: true,
+							onClick: this.handleNewMealSubmit,
+						},
 						{ text: 'Cancel', onClick: this.toggleAddModal },
 					]}
 					state={control.add}
@@ -220,7 +265,15 @@ function mapStateToProps(state, ownProps) {
 
 	const { memberId: routeMemberId } = ownProps.match.params;
 	const member = members.find(member => member.memberId === routeMemberId);
-	return { meals: meals.data[routeMemberId], control: meals.control, member, userId: user.data.memberId };
+	return {
+		meals: meals.data[routeMemberId],
+		control: meals.control,
+		member,
+		user: user.data,
+		routeMemberId,
+	};
 }
 
-export default connect(mapStateToProps, { fetchMeals, fetchMember, addMeal })(Meals);
+export default connect(mapStateToProps, { fetchMeals, fetchMember, addMeal })(
+	Meals,
+);

@@ -9,20 +9,21 @@ import _ from "lodash";
 export default function Modal(props) {
 
 	const createModal = () => {
-
+		const errors = _.get(props, 'state.error.data', null);
 		return (
 			<div className={styles.modalWrapper}>
 				<div className={styles.modalBody}>
 			 		<h3 className={styles.modalTitle}> {props.title} </h3> 
 			 		<div className={styles.modalContent}> {props.body} </div>
-					 {!_.isEmpty(props.state.error) ? 
-						<div className={styles.errorBox}>{Object.values(props.state.error).map(err=>err.join("")).map(err=>(
-							<div>{err}</div>
-						))}</div>
-						: null
-					 }
+					 {errors ? 
+						<div className={styles.errorBox}>
+							{Object.values(errors).map(err=>err.join(null)).map((err,index)=>(
+							<div key={index}>{err}</div>
+							))}
+						</div>
+					: null}
 			 		<div className={styles.modalControls}> 
-						{ 	props.state.processing
+						{ props.state && props.state.processing
 							? <Spinner small={true} />
 							: props.controls.map((control, i) => {
 								const btn = control.primary ? styles.primaryBtn : styles.secondaryBtn

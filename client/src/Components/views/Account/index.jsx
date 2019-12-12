@@ -1,4 +1,4 @@
-import React, { Component, createRef } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Link, Redirect } from 'react-router-dom';
@@ -9,15 +9,18 @@ import ViewHeader from 'Components/ViewHeader';
 import Modal from 'Components/Modals';
 import { fetchMember, deleteMember, unAuthUser, updateMember } from 'Actions';
 import ControlledFields from 'Components/ControlledFields';
-import getRelevantMemberValues from 'Utils/getRelevantMemberValues';
 import { ROLE_TYPES } from 'Utils/getIfAllowed';
 import classnames from 'classnames';
 
 const roleOptions = {
-	[ROLE_TYPES.ADMIN]: [ ROLE_TYPES.ADMIN, ROLE_TYPES.MANAGER,  ROLE_TYPES.REGULAR ],
-	[ROLE_TYPES.MANAGER]: [ ROLE_TYPES.MANAGER,  ROLE_TYPES.REGULAR ],
-	[ROLE_TYPES.REGULAR]: [ ROLE_TYPES.REGULAR ],
-}
+	[ROLE_TYPES.ADMIN]: [
+		ROLE_TYPES.ADMIN,
+		ROLE_TYPES.MANAGER,
+		ROLE_TYPES.REGULAR,
+	],
+	[ROLE_TYPES.MANAGER]: [ROLE_TYPES.MANAGER, ROLE_TYPES.REGULAR],
+	[ROLE_TYPES.REGULAR]: [ROLE_TYPES.REGULAR],
+};
 
 export const memberPropTypes = PropTypes.shape({
 	firstName: PropTypes.string.isRequired,
@@ -30,7 +33,7 @@ export const memberPropTypes = PropTypes.shape({
 class Account extends Component {
 	static propTypes = {
 		member: memberPropTypes,
-		userId: PropTypes.string.isRequired,
+		user: memberPropTypes,
 		match: PropTypes.shape({
 			params: PropTypes.shape({
 				memberId: PropTypes.string.isRequired,
@@ -107,10 +110,10 @@ class Account extends Component {
 		this.toggleEditMode();
 	};
 
-	toggleDeleteConfirmModal = () =>{
-		let deleteUserModal  = !this.state.deleteUserModal;
-		this.setState({deleteUserModal});
-	}
+	toggleDeleteConfirmModal = () => {
+		let deleteUserModal = !this.state.deleteUserModal;
+		this.setState({ deleteUserModal });
+	};
 
 	handleDeleteClick = event => {
 		event.preventDefault();
@@ -120,15 +123,15 @@ class Account extends Component {
 	};
 
 	get isMemberTheUser() {
-		const { userId, member } = this.props;
+		const { user, member } = this.props;
 		const { memberId } = member;
-		return memberId === userId;
+		return memberId === user.memberId;
 	}
 
 	previousMember = this.props.member;
 
 	render() {
-		const { userId, member, user } = this.props;
+		const { member, user } = this.props;
 		const isMemberDeleted = this.previousMember && !member;
 
 		if (isMemberDeleted) {
@@ -145,26 +148,28 @@ class Account extends Component {
 		const { firstName, lastName, memberId } = this.props.member;
 
 		let headerMessage = `${firstName} ${lastName}'s account`;
-		if (memberId === userId) {
+		if (this.isMemberTheUser) {
 			headerMessage = 'My account';
 		}
-
+		const isUserAdmin = user.roleType === ROLE_TYPES.ADMIN;
 		return (
 			<div className={styles.Account}>
 				<ViewHeader>
 					{headerMessage}
-					<Link
-						to={`/meals/${memberId}`}
-						className={classnames(styles.linkBtn, styles.cntlBtn)}
-					>
-						(View meals)
-					</Link>
+					{(this.isMemberTheUser || isUserAdmin) && (
+						<Link
+							to={`/meals/${memberId}`}
+							className={classnames(styles.linkBtn, styles.cntlBtn)}
+						>
+							(View meals)
+						</Link>
+					)}
 				</ViewHeader>
 				<ControlledFields
 					fieldConfigs={fieldConfigs}
 					fieldValues={member}
 					isEditMode={isEditMode}
-					fieldOptions={{roleType: roleOptions[user.roleType]}}
+					fieldOptions={{ roleType: roleOptions[user.roleType] }}
 					setupFieldsDataExternalControlers={
 						this.setupFieldsDataExternalControlers
 					}
@@ -203,7 +208,6 @@ class Account extends Component {
 				<Modal
 					isVisible={deleteUserModal}
 					title={`Are you sure you want to delete ${firstName} ${lastName}?`}
-				
 					controls={[
 						{ text: 'Delete', primary: true, onClick: this.handleDeleteClick },
 						{ text: 'Cancel', onClick: this.toggleDeleteConfirmModal },
@@ -218,7 +222,7 @@ function mapStateToProps(state, ownProps) {
 	const { user, members } = state;
 	const { memberId: routeMemberId } = ownProps.match.params;
 	const member = members.find(member => member.memberId === routeMemberId);
-	return { member, userId: user.data.memberId, user: user.data };
+	return { member, user: user.data };
 }
 export default connect(mapStateToProps, {
 	updateMember,

@@ -10,11 +10,9 @@ import { unAuthUserLocally, setUserInState } from 'Actions';
 
 export function fetchMembers() {
 	console.log('fetching members: ');
-
 	return async function _dispatcher_(dispatch) {
 		try {
 			const res = await axiosApi.get('/members');
-
 			const normalizedMembers = res.data.map(normalizeMember);
 			dispatch({
 				type: SET_MEMBERS,
@@ -22,16 +20,12 @@ export function fetchMembers() {
 			});
 		} catch (err) {
 			console.log('problem while fetching data: ', err);
-			// if (err.response.status === 401) {
-			// 	signoutUser(dispatch);
-			// }
 		}
 	};
 }
 
 export function fetchMember({ memberId }) {
-	console.log('fetching members: ');
-
+	console.log('fetching one member: ', memberId);
 	return async function _dispatcher_(dispatch) {
 		try {
 			const res = await axiosApi.get(`/member/${memberId}`);
@@ -39,24 +33,17 @@ export function fetchMember({ memberId }) {
 			addMemberToState(dispatch, normalizedMember);
 		} catch (err) {
 			console.log('problem while fetching data: ', err);
-			// if (err.response.status === 401) {
-			// 	signoutUser(dispatch);
-			// }
 		}
 	};
 }
 
 export function updateMember({ member, isUpdatingSelf } = {}) {
 	console.log('updating member: ');
-	// const token = localStorage.getItem('token');
 
 	return async function _dispatcher_(dispatch) {
 		try {
 			const { memberId } = member;
 			const denormalizedMember = denormalizeMember(member);
-			// const res = await axiosApi.put(`/member/${memberId}`, {
-			// 	data: denormalizedMember,
-			// });
 			const res = await axiosApi({
 				method: 'put',
 				url: `/member/${memberId}`,
@@ -73,23 +60,16 @@ export function updateMember({ member, isUpdatingSelf } = {}) {
 			}
 		} catch (err) {
 			console.log('problem while fetching data: ', err);
-			// if (err.response.status === 401) {
-			// 	signoutUser(dispatch);
-			// }
 		}
 	};
 }
 
 export function deleteMember({ memberId, isDeletingSelf }) {
-	console.log('updating member: ');
-	// const token = localStorage.getItem('token');
-
 	return async function _dispatcher_(dispatch) {
 		try {
-			const res = await axiosApi({
+			await axiosApi({
 				method: 'delete',
 				url: `/member/${memberId}`,
-				// headers: { 'x-auth': token },
 			});
 
 			if (isDeletingSelf) {
@@ -102,9 +82,6 @@ export function deleteMember({ memberId, isDeletingSelf }) {
 			}
 		} catch (err) {
 			console.log('problem while fetching data: ', err);
-			// if (err.response.status === 401) {
-			// 	signoutUser(dispatch);
-			// }
 		}
 	};
 }
@@ -116,15 +93,12 @@ export function addMemberToState(dispatch, payload) {
 }
 export function createMember(member = {}) {
 	console.log('creating member: ');
-	// const token = localStorage.getItem('token');
-
 	return async function _dispatcher_(dispatch) {
 		try {
 			const denormalizedMember = denormalizeMember(member);
 			const res = await axiosApi({
 				method: 'post',
 				url: `/member`,
-				// headers: { 'x-auth': token },
 				data: denormalizedMember,
 			});
 
@@ -132,9 +106,6 @@ export function createMember(member = {}) {
 			addMemberToState(dispatch, normalizedMember);
 		} catch (err) {
 			console.log('problem while fetching data: ', err);
-			// if (err.response.status === 401) {
-			// 	signoutUser(dispatch);
-			// }
 		}
 	};
 }

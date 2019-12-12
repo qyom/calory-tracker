@@ -2,13 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import styles from './styles.module.scss';
-import memberLike from 'PropTypes/memberLike';
 import DateTimePicker from 'react-datetime-picker';
-import Select from 'react-select'
-import moment from 'moment';
 
 import { isFunction } from 'lodash';
-import { attribute } from 'postcss-selector-parser';
 
 const customInputs = {
 	dateTime: 'dateTime',
@@ -18,12 +14,6 @@ const customInputs = {
 export default class ControlFields extends Component {
 	static propTypes = {
 		fieldValues: PropTypes.object,
-		// 	userId: PropTypes.string.isRequired,
-		// 	match: PropTypes.shape({
-		// 		params: PropTypes.shape({
-		// 			memberId: PropTypes.string.isRequired,
-		// 		}).isRequired,
-		// 	}).isRequired,
 		fieldConfigs: PropTypes.arrayOf(
 			PropTypes.shape({
 				name: PropTypes.string.isRequired,
@@ -53,7 +43,7 @@ export default class ControlFields extends Component {
 
 	constructor(props) {
 		super(props);
-		const { fieldValues, fieldConfigs } = props;
+		const { fieldValues } = props;
 
 		const fieldsState = this.prepareFieldsState(fieldValues);
 		this.state = { ...fieldsState };
@@ -137,7 +127,7 @@ export default class ControlFields extends Component {
 			if(type === 'radioGroup' && isEditMode) {
 				input =  (
 					<fieldset className={styles.input}>
-					 {fieldOptions[name].map((option) =>{
+					 {fieldOptions && fieldOptions[name] && fieldOptions[name].map((option) =>{
 						return ( 
 							<label key={option}>
 								<input name={name} type='radio' value={option} checked={option === fieldValue} 

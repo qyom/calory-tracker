@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import { authUser, createUser } from 'Actions';
 import ControlledFields from 'Components/ControlledFields';
 import fieldConfigs from './fieldConfigs';
-import getRelevantMemberValues from 'Utils/getRelevantMemberValues';
 import ViewHeader from 'Components/ViewHeader';
 import Spinner from 'Components/Spinner';
 import classnames from 'classnames';
@@ -26,9 +25,7 @@ class Signup extends Component {
 	handleSubmit = event => {
 		event.preventDefault();
 		const updatedMemberState = this.getFieldValues();
-		// let updatedMemberState = getRelevantMemberValues(updatedMemberState);
 		updatedMemberState.roleType = ROLE_TYPES.REGULAR;
-		// const updatedMember = { ...this.props.member, ...relevantMemberValues };
 		this.props.createUser(updatedMemberState);
 	};
 
@@ -50,19 +47,6 @@ class Signup extends Component {
 				</ViewHeader>
 				<ControlledFields
 					fieldConfigs={fieldConfigs}
-					// fieldValues={
-					// 	{
-					// 		// firstName: '',
-					// 		// lastName: '',
-					// 		// maxCaloriesPerDay: '',
-					// 		// email: '',
-					// 		// memberId: '',
-					// 		// password: '',
-					// 		// confirmPassword: '',
-					// 	}
-					// }
-					// fieldValues={{ ...member, password: '', confirmPassword: '' }}
-					// isEditMode={isEditMode}
 					setupFieldsDataExternalControlers={
 						this.setupFieldsDataExternalControlers
 					}

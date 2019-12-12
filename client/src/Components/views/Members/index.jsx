@@ -1,13 +1,30 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
+import PropTypes from 'prop-types';
+import { Redirect } from 'react-router-dom';
 import { fetchMembers, createMember } from 'Actions';
 import ViewHeader from 'Components/ViewHeader';
 import Modal from 'Components/Modals';
 import ControlledFields from 'Components/ControlledFields';
 import fieldConfigs from 'Components/views/Account/fieldConfigs';
-import getRelevantMemberValues from 'Utils/getRelevantMemberValues';
+import { memberPropTypes } from 'Components/views/Account';
+import getIfAllowed, {
+	OPERATION_TYPES,
+	RESOURCE_TYPES,
+	ROLE_TYPES,
+} from 'Utils/getIfAllowed';
 import styles from './styles.module.scss';
+
+const roleOptions = {
+	[ROLE_TYPES.ADMIN]: [
+		ROLE_TYPES.ADMIN,
+		ROLE_TYPES.MANAGER,
+		ROLE_TYPES.REGULAR,
+	],
+	[ROLE_TYPES.MANAGER]: [ROLE_TYPES.MANAGER, ROLE_TYPES.REGULAR],
+	[ROLE_TYPES.REGULAR]: [ROLE_TYPES.REGULAR],
+};
 
 class Members extends Component {
 	constructor(props) {
@@ -17,12 +34,24 @@ class Members extends Component {
 		};
 	}
 
+	static propTypes = {
+		members: PropTypes.arrayOf(memberPropTypes),
+		user: memberPropTypes,
+	};
+
 	componentDidMount() {
 		this.props.fetchMembers();
 	}
 
 	handleMemberClick = memberId => {
-		this.props.history.push(`/meals/${memberId}`);
+		const { user } = this.props;
+		const isTargetMemberTheUser = memberId === user.memberId;
+		const isUserAdmin = user.roleType === ROLE_TYPES.ADMIN;
+		let path = `/members/${memberId}`;
+		if (isTargetMemberTheUser || isUserAdmin) {
+			path = `/meals/${memberId}`;
+		}
+		this.props.history.push(path);
 	};
 
 	renderMembers() {
@@ -52,7 +81,6 @@ class Members extends Component {
 
 	handleAddMemberClick = () => {
 		let updatedMember = this.getFieldValues();
-		// updatedMember = getRelevantMemberValues(updatedMember);
 		this.props.createMember(updatedMember);
 		this.toggleAddModal();
 	};
@@ -62,7 +90,20 @@ class Members extends Component {
 		this.setState({ isModalVisible });
 	};
 
+	get isThisPageAllowed() {
+		const { user } = this.props;
+		return getIfAllowed({
+			role: user.roleType,
+			resource: RESOURCE_TYPES.MEMBER,
+			operation: OPERATION_TYPES.READ,
+		});
+	}
+
 	render() {
+		if (!this.isThisPageAllowed) {
+			return <Redirect to="/" />;
+		}
+
 		const { isModalVisible } = this.state;
 		return (
 			<div className={styles.Members}>
@@ -96,6 +137,7 @@ class Members extends Component {
 							setupFieldsDataExternalControlers={
 								this.setupFieldsDataExternalControlers
 							}
+							fieldOptions={{ roleType: roleOptions[this.props.user.roleType] }}
 						/>
 					}
 					controls={[
@@ -109,8 +151,8 @@ class Members extends Component {
 }
 
 function mapStateToProps(state) {
-	const { members } = state;
-	return { members };
+	const { members, user } = state;
+	return { members, user: user.data };
 }
 export default connect(mapStateToProps, { fetchMembers, createMember })(
 	Members,

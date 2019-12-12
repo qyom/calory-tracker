@@ -1,18 +1,5 @@
 import { AUTH_USER, UNAUTH_USER, CREATE_USER } from 'Constants/actionTypes';
-import { normalizeMember } from 'Utils/normalizers';
 
-// export const initialState = {
-// 	isLoading: false,
-// 	error: null,
-// 	data: normalizeMember({
-// 		first_name: 'Gail',
-// 		last_name: 'Nitzsche',
-// 		max_calories_per_day: 1906,
-// 		member_id: 211,
-// 		role_type: 'ADMIN',
-// 		email: 'gail.nitzsche@cal.com',
-// 	}),
-// };
 export const initialState = {
 	isLoading: false,
 	error: null,

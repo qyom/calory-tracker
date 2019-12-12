@@ -3,10 +3,8 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import CustomNavLink from 'Components/CustomNavLink';
-import { userId } from 'Constants/miscConstants';
 import getIfAllowed, {
 	OPERATION_TYPES,
-	ROLE_TYPES,
 	RESOURCE_TYPES,
 } from 'Utils/getIfAllowed';
 import styles from './styles.module.scss';

@@ -29,12 +29,8 @@ export const RESOURCE_TYPES = Object.freeze({
 
 const config = {
 	[REGULAR]: {
-		[MEAL]: {
-			[CREATE]: true,
-			[READ]: true,
-			[EDIT]: true,
-			[DELETE]: true,
-		},
+		[MEAL]: {},
+		[MEMBER]: {},
 	},
 	[MANAGER]: {
 		[MEMBER]: {

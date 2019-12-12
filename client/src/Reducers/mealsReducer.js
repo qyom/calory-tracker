@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import update from 'immutability-helper';
 
 import { SET_MEALS, ADD_MEAL, UPDATE_MEAL, DELETE_MEAL } from 'Constants/actionTypes';
@@ -11,7 +10,7 @@ export default function mealsReducer(state = initialState, action) {
 		case SET_MEALS: {
 			// todo -update url
 			const { meals, memberId } = action.payload;
-			return update(state, {data: {[memberId]: {$set: meals}}});
+			return {...state, data: {[memberId]: meals}};
 		}
 		case ADD_MEAL.START: {
 			return update(state, {control: {add: {processing: {$set: true}}}});
@@ -26,27 +25,29 @@ export default function mealsReducer(state = initialState, action) {
 		}
 		case ADD_MEAL.ERROR: {
 			console.log("error payload", action.payload);
-			return update(state, {control: {add: {processing: {$set: false}, error: {$set: action.payload.error.data}}}});
+			return update(state, {control: {add: {processing: {$set: false}, error: {$set: action.payload.error}}}});
 		}
 		case UPDATE_MEAL: {
-			const { meal } = action.payload;
+			const {meal} = action.payload;
 			const { memberId } = meal;
-			const memberMeals = state[memberId];
-
+			const memberMeals = state.data[memberId];
 			const updatedMemberMeals = memberMeals.map(currMeal => {
 				return currMeal.mealId === meal.mealId ? meal : currMeal;
 			});
-			console.log('updatedMemberMeals: ', updatedMemberMeals);
-			return { ...state, [memberId]: updatedMemberMeals };
+			return update(state, {
+				data: {[meal.memberId]: {$set: updatedMemberMeals}}
+			});
 		}
 		case DELETE_MEAL: {
 			const { mealId, memberId } = action.payload;
-			const memberMeals = state[memberId];
+			const memberMeals = state.data[memberId];
 
 			const updatedMemberMeals = memberMeals.filter(currMeal => {
 				return currMeal.mealId !== mealId;
 			});
-			return { ...state, [memberId]: updatedMemberMeals };
+			return update(state, {
+				data: {[memberId]: {$set: updatedMemberMeals}}
+			});
 		}
 
 		default:

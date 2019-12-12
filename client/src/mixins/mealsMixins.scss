@@ -174,18 +174,22 @@
 }
 
 @mixin errors {
-	.pageError {
-		color: #f54b4b;
-		font-size: 14px;
-	}
-}
-
-@mixin errors {
 	.errorBox {
 		// border: 1px solid #f54b4b;
 		color: #f54b4b;
 		font-size: 14px;
 		margin: 5px;
 		padding:3px;
+	}
+	.pageError {
+		color: #f54b4b;
+		font-size: 14px;
+	}
+}
+
+@mixin success {
+	.successMsg {
+		color: #11CC33;
+		font-size: 14px;
 	}
 }

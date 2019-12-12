@@ -5,6 +5,7 @@ const dateToString = date => moment(date).format("YYYY-MM-DD HH:mm:ss");
 const identity = value => value;
 
 function transform(values, configs = {}) {
+	
 	const transformedValues = Object.keys(values).reduce(
 		(transformedValues, key) => {
 			const value = values[key];
@@ -22,7 +23,7 @@ function transform(values, configs = {}) {
 		},
 		{},
 	);
-
+	//console.log("Normalizing", values, configs, "RESULT", transformedValues);
 	return transformedValues;
 }
 

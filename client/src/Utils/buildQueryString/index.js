@@ -11,5 +11,6 @@ export default function buildFiltersQueryString(filters, queryStringMap) {
 		}, '?');
 		queryString = queryString.slice(0, queryString.length - 1);
 	}
+	console.log("filterKeys", filterKeys, queryString);
 	return encodeURI(queryString);
 }

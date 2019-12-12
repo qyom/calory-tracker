@@ -24,9 +24,6 @@ export function fetchMeals(member = {}, filters = {}) {
 			});
 		} catch (err) {
 			console.log('problem while fetching data: ', err);
-			// if (err.response.status === 401) {
-			// 	signoutUser(dispatch);
-			// }
 		}
 	};
 }
@@ -74,17 +71,15 @@ export function updateMeal(meal = {}) {
 				url: `/meal/${mealId}`,
 				data: denormalizedMeal,
 			});
-			const normalizedMeal = normalizeMeal(res.data.meal);
+
+			const normalizedMeal = normalizeMeal(res.data);
 
 			dispatch({
 				type: UPDATE_MEAL,
 				payload: { meal: normalizedMeal, memberId },
 			});
 		} catch (err) {
-			console.log('problem while fetching data: ', err);
-			// if (err.response.status === 401) {
-			// 	signoutUser(dispatch);
-			// }
+			console.log('problem while updating a meal: ', err);
 		}
 	};
 }
@@ -94,7 +89,7 @@ export function deleteMeal(meal = {}) {
 
 	return async function _dispatcher_(dispatch) {
 		try {
-			const res = await axiosApi({
+			await axiosApi({
 				method: 'delete',
 				url: `/meal/${mealId}`,
 			});
@@ -105,9 +100,6 @@ export function deleteMeal(meal = {}) {
 			});
 		} catch (err) {
 			console.log('problem while fetching data: ', err);
-			// if (err.response.status === 401) {
-			// 	signoutUser(dispatch);
-			// }
 		}
 	};
 }

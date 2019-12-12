@@ -13,5 +13,6 @@ export default [
 		name: 'dateIntake',
 		type: 'dateTime',
 		label: 'Date/Time',
+		defaultValue: new Date()
 	}
 ];

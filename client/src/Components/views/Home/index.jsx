@@ -5,8 +5,6 @@ import PropTypes from 'prop-types';
 import { memberPropTypes } from 'Components/views/Account';
 import Spinner from 'Components/Spinner';
 
-import styles from './styles.module.scss';
-
 function Home(props) {
 	const { user } = props;
 	const isAuthenticated = !!user.data;

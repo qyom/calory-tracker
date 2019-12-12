@@ -1,5 +1,4 @@
 import React, { Component, Fragment } from 'react';
-import ReactDOM from 'react-dom';
 import DateTimePicker from 'react-datetime-picker';
 import { connect } from 'react-redux';
 import Modal from 'Components/Modals';
@@ -53,7 +52,7 @@ class Meal extends Component {
 	};
 
 	selectDataTime = (dateIntake, name) => {
-		console.log('whats name', dateIntake, name);
+		
 		this.setState({ dateIntake });
 	};
 
@@ -62,7 +61,7 @@ class Meal extends Component {
 	};
 
 	saveMealDetails = () => {
-		console.log('CALL SAVE API');
+
 		const { meal } = this.props;
 		const { calories, dateIntake, name } = this.state;
 		const updatedMeal = { ...meal, calories, dateIntake, name };
@@ -71,7 +70,7 @@ class Meal extends Component {
 	};
 
 	handleDeleteMealConfirmatinClick = () => {
-		console.log('DELETE MEAL');
+
 		const { mealId, memberId } = this.props.meal || {};
 		this.props.deleteMeal({ mealId, memberId });
 		this.setState({ isModalVisible: false });
@@ -86,7 +85,6 @@ class Meal extends Component {
 		const { calories, dateIntake, name, editMode, isModalVisible } = this.state;
 		const editIcon = editMode ? 'save' : 'edit';
 		const deleteIcon = editMode ? 'times-circle' : 'trash-alt';
-		const editBtnStyle = editMode ? styles.mealSaveBtn : styles.mealEditBtn;
 		const cellStyle = editMode ? styles.cellDetailEdit : styles.cellDetail;
 		const editAction = editMode ? this.saveMealDetails : this.toggleEditMode;
 		const cancelDeleteAction = editMode

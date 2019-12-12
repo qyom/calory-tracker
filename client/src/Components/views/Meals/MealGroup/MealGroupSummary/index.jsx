@@ -5,7 +5,7 @@ import styles from './styles.module.scss';
 
 export default function MealGroup(props) {
 	const { formattedDate, numberOfMeals, calories, handleGroupClick, maxCaloriesPerDay } = props;
-		console.log('calories----', calories, maxCaloriesPerDay)
+
 	const warnMode = calories > maxCaloriesPerDay;
 
 	return (
