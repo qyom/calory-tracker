@@ -18,22 +18,22 @@ class Signup extends Component {
 		createUser: PropTypes.func.isRequired,
 	};
 
-	setupFieldsDataExternalControlers = (getFieldsData, setFieldsData) => {
-		this.getFieldsData = getFieldsData;
-		// this.setFieldsData = setFieldsData;
+	setupFieldsDataExternalControlers = (getFieldValues, setFieldValues) => {
+		this.getFieldValues = getFieldValues;
+		// this.setFieldValues = setFieldValues;
 	};
 
 	handleSubmit = event => {
 		event.preventDefault();
-		const updatedMemberState = this.getFieldsData();
-		const relevantMemberValues = getRelevantMemberValues(updatedMemberState);
-		relevantMemberValues.roleType = ROLE_TYPES.REGULAR;
+		const updatedMemberState = this.getFieldValues();
+		// let updatedMemberState = getRelevantMemberValues(updatedMemberState);
+		updatedMemberState.roleType = ROLE_TYPES.REGULAR;
 		// const updatedMember = { ...this.props.member, ...relevantMemberValues };
-		this.props.createUser(relevantMemberValues);
+		this.props.createUser(updatedMemberState);
 	};
 
 	render() {
-		const { isLoading } = this.props
+		const { isLoading } = this.props;
 		if (this.props.isAuthenticated) {
 			return <Redirect to="/" />;
 		}
@@ -59,10 +59,14 @@ class Signup extends Component {
 						this.setupFieldsDataExternalControlers
 					}
 				/>
-				<button className={classnames(isLoading ? styles.activeBtn : styles.primaryBtn, styles.cntlBtn)} 
+				<button
+					className={classnames(
+						isLoading ? styles.activeBtn : styles.primaryBtn,
+						styles.cntlBtn,
+					)}
 					onClick={this.handleSubmit}
 				>
-					{isLoading ? <Spinner small={true} /> : 'Submit' }
+					{isLoading ? <Spinner small={true} /> : 'Submit'}
 				</button>
 			</div>
 		);

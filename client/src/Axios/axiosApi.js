@@ -1,14 +1,14 @@
 import axios from 'axios';
+const baseURL = 'http://192.168.1.114:8081/api';
+// const baseURL = 'http://localHost:4000/api';
 
-const instance = axios.create({
-	baseURL: 'http://192.168.1.114:8081/api',
-	// baseURL: 'http://localHost:4000/api',
-});
+export const axiosApiPure = axios.create({ baseURL });
 
-instance.interceptors.request.use(
+const axiosApi = axios.create({ baseURL });
+axiosApi.interceptors.request.use(
 	config => {
 		const jwt = localStorage.getItem('jwt');
-		config.headers['Authorization'] = 'Bearer ' + jwt;
+		config.headers['Authorization'] = `Bearer ${jwt}`;
 		config.headers['Accept'] = 'application/json';
 		config.headers['Content-Type'] = 'application/json';
 		return config;
@@ -17,4 +17,4 @@ instance.interceptors.request.use(
 		return Promise.reject(error);
 	},
 );
-export default instance;
+export default axiosApi;

@@ -26,7 +26,7 @@ class Meals extends Component {
 		intake_date_to: null,
 		intake_hours_from: null,
 		intake_hours_to: null,
-		isModalVisible: false
+		isModalVisible: false,
 	};
 
 	static propTypes = {
@@ -68,15 +68,15 @@ class Meals extends Component {
 	}
 
 	onDateRangeChange = dateRange => {
-		const from =  dateRange && dateRange[0],
-			to = dateRange && dateRange[1]; 
+		const from = dateRange && dateRange[0],
+			to = dateRange && dateRange[1];
 		const intake_date_from = from && moment(from).format('YYYY-MM-DD'),
 			intake_date_to = to && moment(to).format('YYYY-MM-DD');
-		this.setState({intake_date_from, intake_date_to, dateRange});
-	}
+		this.setState({ intake_date_from, intake_date_to, dateRange });
+	};
 
-	getHour(hour){
-		if(hour[0] === '0') {
+	getHour(hour) {
+		if (hour[0] === '0') {
 			hour = hour.slice(1, 2);
 		} else {
 			hour = hour.slice(0, 2);
@@ -89,8 +89,8 @@ class Meals extends Component {
 			to = timeRange && timeRange[1];
 		const intake_hours_from = from && this.getHour(from),
 			intake_hours_to = to && this.getHour(to);
-		this.setState({intake_hours_from, intake_hours_to, timeRange})
-	}
+		this.setState({ intake_hours_from, intake_hours_to, timeRange });
+	};
 
 	resetFilter = () => {
 		this.setState({
@@ -99,7 +99,7 @@ class Meals extends Component {
 			intake_hours_from: null,
 			intake_hours_to: null,
 			dateRange: null,
-			timeRange: null
+			timeRange: null,
 		});
 	};
 
@@ -110,7 +110,11 @@ class Meals extends Component {
 			intake_hours_from,
 			intake_hours_to,
 		} = this.state;
-		console.log('CALL FILTER API', intake_date_from +' / ' +intake_date_to, intake_hours_from + ' - ' +intake_hours_to );
+		console.log(
+			'CALL FILTER API',
+			intake_date_from + ' / ' + intake_date_to,
+			intake_hours_from + ' - ' + intake_hours_to,
+		);
 	};
 
 	toggleAddModal = () => {
@@ -119,12 +123,12 @@ class Meals extends Component {
 	};
 
 	handleNewMealSubmit = () => {
-		const fieldData = this.getFieldsData;
-	}
+		const fieldData = this.getFieldValues;
+	};
 
-	setupFieldsDataExternalControlers = (getFieldsData, setFieldsData) => {
-		this.getFieldsData = getFieldsData;
-		this.setFieldsData = setFieldsData;
+	setupFieldsDataExternalControlers = (getFieldValues, setFieldValues) => {
+		this.getFieldValues = getFieldValues;
+		this.setFieldValues = setFieldValues;
 	};
 
 	render() {
@@ -141,7 +145,10 @@ class Meals extends Component {
 			<div className={styles.Meals}>
 				<ViewHeader>
 					{headerMessage}
-					<Link to={`/members/${member.memberId}`} className={classnames(styles.linkBtn, styles.cntlBtn)}>
+					<Link
+						to={`/members/${member.memberId}`}
+						className={classnames(styles.linkBtn, styles.cntlBtn)}
+					>
 						(View account)
 					</Link>
 					<div className={styles.pageCntls}>

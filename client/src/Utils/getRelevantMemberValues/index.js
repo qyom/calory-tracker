@@ -1,3 +1,4 @@
+// todo - delete this file
 export default function getRelevantMemberValues(member) {
 	// this will make sure irrelevant fields like date_created
 	// don't end up on put request when updating the user
@@ -26,6 +27,12 @@ export default function getRelevantMemberValues(member) {
 		if (value === undefined) {
 			delete relevantMemberValues[key];
 		}
+	}
+	if (password === '') {
+		delete relevantMemberValues.password;
+	}
+	if (confirmPassword === '') {
+		delete relevantMemberValues.confirmPassword;
 	}
 
 	return relevantMemberValues;

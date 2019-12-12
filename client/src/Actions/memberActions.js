@@ -6,7 +6,7 @@ import {
 } from 'Constants/actionTypes';
 import axiosApi from 'Axios/axiosApi.js';
 import { normalizeMember, denormalizeMember } from 'Utils/normalizers';
-import { unAuthUser } from 'Actions';
+import { unAuthUserLocally, setUserInState } from 'Actions';
 
 export function fetchMembers() {
 	console.log('fetching members: ');
@@ -36,10 +36,7 @@ export function fetchMember({ memberId }) {
 		try {
 			const res = await axiosApi.get(`/member/${memberId}`);
 			const normalizedMember = normalizeMember(res.data);
-			dispatch({
-				type: ADD_MEMBER,
-				payload: { member: normalizedMember },
-			});
+			addMemberToState(dispatch, { member: normalizedMember });
 		} catch (err) {
 			console.log('problem while fetching data: ', err);
 			// if (err.response.status === 401) {
@@ -49,7 +46,7 @@ export function fetchMember({ memberId }) {
 	};
 }
 
-export function updateMember(member = {}) {
+export function updateMember({ member, isUpdatingSelf } = {}) {
 	console.log('updating member: ');
 	// const token = localStorage.getItem('token');
 
@@ -63,15 +60,17 @@ export function updateMember(member = {}) {
 			const res = await axiosApi({
 				method: 'put',
 				url: `/member/${memberId}`,
-				// headers: { 'x-auth': token },
 				data: denormalizedMember,
 			});
-			const normalizedMember = normalizeMember(res.data);
+			const normalizedMember = normalizeMember(res.data.member);
 
 			dispatch({
 				type: SET_MEMBER,
-				payload: { member: normalizedMember },
+				payload: normalizedMember,
 			});
+			if (isUpdatingSelf) {
+				setUserInState(dispatch, normalizedMember);
+			}
 		} catch (err) {
 			console.log('problem while fetching data: ', err);
 			// if (err.response.status === 401) {
@@ -94,7 +93,7 @@ export function deleteMember({ memberId, isDeletingSelf }) {
 			});
 
 			if (isDeletingSelf) {
-				dispatch(unAuthUser());
+				unAuthUserLocally(dispatch);
 			} else {
 				dispatch({
 					type: DELETE_MEMBER,
@@ -109,7 +108,12 @@ export function deleteMember({ memberId, isDeletingSelf }) {
 		}
 	};
 }
-
+export function addMemberToState(dispatch, payload) {
+	dispatch({
+		type: ADD_MEMBER,
+		payload,
+	});
+}
 export function createMember(member = {}) {
 	console.log('creating member: ');
 	// const token = localStorage.getItem('token');
@@ -125,10 +129,7 @@ export function createMember(member = {}) {
 			});
 
 			const normalizedMember = normalizeMember(res.data);
-			dispatch({
-				type: ADD_MEMBER,
-				payload: { member: normalizedMember },
-			});
+			addMemberToState(dispatch, { member: normalizedMember });
 		} catch (err) {
 			console.log('problem while fetching data: ', err);
 			// if (err.response.status === 401) {

@@ -45,15 +45,15 @@ class Members extends Component {
 		});
 	}
 
-	setupFieldsDataExternalControlers = (getFieldsData, setFieldsData) => {
-		this.getFieldsData = getFieldsData;
-		this.setFieldsData = setFieldsData;
+	setupFieldsDataExternalControlers = (getFieldValues, setFieldValues) => {
+		this.getFieldValues = getFieldValues;
+		this.setFieldValues = setFieldValues;
 	};
 
 	handleAddMemberClick = () => {
-		const updatedMember = this.getFieldsData();
-		const relevantMemberValues = getRelevantMemberValues(updatedMember);
-		this.props.createMember(relevantMemberValues);
+		let updatedMember = this.getFieldValues();
+		// updatedMember = getRelevantMemberValues(updatedMember);
+		this.props.createMember(updatedMember);
 		this.toggleAddModal();
 	};
 

@@ -35,39 +35,46 @@ export default class ControlFields extends Component {
 		fieldValues: {},
 	};
 
+	prepareFieldsState(fieldValues) {
+		const { fieldConfigs } = this.props;
+		const fieldsState = fieldConfigs.reduce((fieldsState, config) => {
+			const { name } = config;
+			fieldsState[name] = fieldValues[name] || config.defaultValue || '';
+			return fieldsState;
+		}, {});
+		return fieldsState;
+	}
+
 	constructor(props) {
 		super(props);
 		const { fieldValues, fieldConfigs } = props;
-		const fieldsState = fieldConfigs.reduce((state, config) => {
-			const { name } = config;
-			state[name] = fieldValues[name] || config.defaultValue || '';
-			return state;
-		}, {});
 
+		const fieldsState = this.prepareFieldsState(fieldValues);
 		this.state = { ...fieldsState };
 
-		this.getFieldsData = this.getFieldsData.bind(this);
-		this.setFieldsData = this.setFieldsData.bind(this);
+		this.getFieldValues = this.getFieldValues.bind(this);
+		this.setFieldValues = this.setFieldValues.bind(this);
 	}
 	componentDidMount() {
 		this.props.setupFieldsDataExternalControlers(
-			this.getFieldsData,
-			this.setFieldsData,
+			this.getFieldValues,
+			this.setFieldValues,
 		);
 	}
 
-	getFieldsData() {
-		return this.state;
+	getFieldValues() {
+		return { ...this.state };
 	}
-	setFieldsData(fieldsData, callback) {
+	setFieldValues(fieldsData, callback) {
+		const fieldsState = this.prepareFieldsState(fieldsData);
 		if (isFunction(callback)) {
-			this.setState(fieldsData, callback);
+			this.setState(fieldsState, callback);
 		}
-		this.setState(fieldsData);
+		this.setState(fieldsState);
 	}
 	handleFieldChange = (config, event) => {
 		this.setState({
-			[config.name]: config.type === 'dateTime' ? event : event.target.value
+			[config.name]: config.type === 'dateTime' ? event : event.target.value,
 		});
 	};
 
@@ -83,7 +90,7 @@ export default class ControlFields extends Component {
 				defaultValue,
 				...attributes
 			} = config;
-			const fieldValue = this.state[name];		
+			const fieldValue = this.state[name];
 			let input = <span className={styles.value}>{fieldValue}</span>;
 			if (isEditMode) {
 				input = (
@@ -99,10 +106,15 @@ export default class ControlFields extends Component {
 					/>
 				);
 			} else if (isValueHidden) {
-				input = <span className={styles.value}> <span className={styles.box} /> </span>;
-			} 
+				input = (
+					<span className={styles.value}>
+						{' '}
+						<span className={styles.box} />{' '}
+					</span>
+				);
+			}
 
-			if(type === 'dateTime') {
+			if (type === 'dateTime') {
 				input = (
 					<DateTimePicker
 						className="detailInput"
@@ -114,7 +126,7 @@ export default class ControlFields extends Component {
 						calendarIcon={null}
 						clearIcon={null}
 					/>
-				)
+				);
 			}
 
 			return (

@@ -28,7 +28,7 @@ export default function mealsReducer(state = initialState, action) {
 		}
 		case CREATE_USER.FINISH:
 		case AUTH_USER.FINISH: {
-			const { member } = action.payload;
+			const member = action.payload;
 			return { isLoading: false, error: null, data: member };
 		}
 		case CREATE_USER.ERROR:
@@ -38,7 +38,8 @@ export default function mealsReducer(state = initialState, action) {
 		}
 		// unauth
 		case UNAUTH_USER.START: {
-			return { isLoading: true, error: null, data: null };
+			// convenience boiler plate
+			return state;
 		}
 		case UNAUTH_USER.FINISH: {
 			// todo - if time permits, reset all states to their initial forms on logout

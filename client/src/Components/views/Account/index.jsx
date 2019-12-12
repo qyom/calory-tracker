@@ -32,9 +32,9 @@ class Account extends Component {
 
 	state = { isEditMode: false };
 
-	setupFieldsDataExternalControlers = (getFieldsData, setFieldsData) => {
-		this.getFieldsData = getFieldsData;
-		this.setFieldsData = setFieldsData;
+	setupFieldsDataExternalControlers = (getFieldValues, setFieldValues) => {
+		this.getFieldValues = getFieldValues;
+		this.setFieldValues = setFieldValues;
 	};
 
 	componentDidMount() {
@@ -79,27 +79,37 @@ class Account extends Component {
 	handleCancelClick = event => {
 		event.preventDefault();
 
-		const relevantMemberValues = getRelevantMemberValues(this.props.member);
-		this.setFieldsData(relevantMemberValues, this.toggleEditMode);
+		// const relevantMemberValues = getRelevantMemberValues(this.props.member);
+		// this.setFieldValues(relevantMemberValues, this.toggleEditMode);
+		this.setFieldValues(this.props.member, this.toggleEditMode);
 	};
 
 	handleSaveClick = event => {
 		event.preventDefault();
-		const updatedMemberState = this.getFieldsData();
-		const relevantMemberValues = getRelevantMemberValues(updatedMemberState);
-		// const updatedMember = { ...this.props.member, ...relevantMemberValues };
-		this.props.updateMember(relevantMemberValues);
+		const { memberId } = this.props.member;
+		const updatedMemberState = this.getFieldValues();
+		// updatedMemberState.memberId = memberId;
+		// const relevantMemberValues = getRelevantMemberValues(updatedMemberState);
+
+		this.props.updateMember({
+			member: { ...updatedMemberState, memberId },
+			isUpdatingSelf: this.isMemberTheUser,
+		});
 
 		this.toggleEditMode();
 	};
 
 	handleDeleteClick = event => {
 		event.preventDefault();
+		const { memberId } = this.props.member;
+		this.props.deleteMember({ memberId, isDeletingSelf: this.isMemberTheUser });
+	};
+
+	get isMemberTheUser() {
 		const { userId, member } = this.props;
 		const { memberId } = member;
-		const isDeletingSelf = memberId === userId;
-		this.props.deleteMember({ memberId, isDeletingSelf });
-	};
+		return memberId === userId;
+	}
 
 	previousMember = this.props.member;
 
@@ -129,26 +139,51 @@ class Account extends Component {
 			<div className={styles.Account}>
 				<ViewHeader>
 					{headerMessage}
-					<Link to={`/meals/${memberId}`} className={classnames(styles.linkBtn, styles.cntlBtn)}>
+					<Link
+						to={`/meals/${memberId}`}
+						className={classnames(styles.linkBtn, styles.cntlBtn)}
+					>
 						(View meals)
 					</Link>
 				</ViewHeader>
 				<ControlledFields
 					fieldConfigs={fieldConfigs}
-					fieldValues={{ ...member, password: '', confirmPassword: '' }}
+					fieldValues={member}
 					isEditMode={isEditMode}
 					setupFieldsDataExternalControlers={
 						this.setupFieldsDataExternalControlers
 					}
 				/>
-				{!isEditMode && <button className={classnames(styles.primaryBtn, styles.cntlBtn)}
-					onClick={this.handleEditClick}>Edit</button> }
-				{isEditMode && <button className={classnames(styles.primaryBtn, styles.cntlBtn)}
-					onClick={this.handleSaveClick}>Save</button>}
-				{isEditMode && <button className={classnames(styles.secondaryBtn, styles.cntlBtn)}
-					onClick={this.handleCancelClick}>Cancel</button>}
-				<button className={classnames(styles.secondaryBtn, styles.cntlBtn)}
-					onClick={this.handleDeleteClick}>Delete</button>
+				{!isEditMode && (
+					<button
+						className={classnames(styles.primaryBtn, styles.cntlBtn)}
+						onClick={this.handleEditClick}
+					>
+						Edit
+					</button>
+				)}
+				{isEditMode && (
+					<button
+						className={classnames(styles.primaryBtn, styles.cntlBtn)}
+						onClick={this.handleSaveClick}
+					>
+						Save
+					</button>
+				)}
+				{isEditMode && (
+					<button
+						className={classnames(styles.secondaryBtn, styles.cntlBtn)}
+						onClick={this.handleCancelClick}
+					>
+						Cancel
+					</button>
+				)}
+				<button
+					className={classnames(styles.secondaryBtn, styles.cntlBtn)}
+					onClick={this.handleDeleteClick}
+				>
+					Delete
+				</button>
 			</div>
 		);
 	}

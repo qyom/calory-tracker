@@ -19,12 +19,12 @@ export default function mealsReducer(state = initialState, action) {
 			return members;
 		}
 		case ADD_MEMBER: {
-			const { member } = action.payload;
+			const member = action.payload;
 			// console.log("data: ", data);
 			return [...state, member];
 		}
 		case SET_MEMBER: {
-			const { member } = action.payload;
+			const member = action.payload;
 			// console.log("data: ", data);
 			const index = state.findIndex(
 				currentMember => currentMember.memberId === member.memberId,

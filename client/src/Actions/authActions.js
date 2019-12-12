@@ -1,4 +1,4 @@
-import axiosApi from 'Axios/axiosApi.js';
+import axiosApi, { axiosApiPure } from 'Axios/axiosApi.js';
 import {
 	AUTH_USER,
 	UNAUTH_USER,
@@ -6,6 +6,7 @@ import {
 	ADD_MEMBER,
 } from 'Constants/actionTypes';
 import { normalizeMember, denormalizeMember } from 'Utils/normalizers';
+import { addMemberToState } from 'Actions';
 
 export function authUser({ email, password }) {
 	// console.log("authUser");
@@ -69,33 +70,39 @@ export function createUser(member = {}) {
 	};
 }
 
-function setUser(dispatch, member) {
-	dispatch({
-		type: ADD_MEMBER,
-		payload: { member },
-	});
+export function setUserInState(dispatch, payload) {
 	dispatch({
 		type: AUTH_USER.FINISH,
-		payload: { member },
+		payload,
 	});
+}
+function setUser(dispatch, member) {
+	addMemberToState(dispatch, member);
+	setUserInState(dispatch, member);
 }
 
 // function signoutUser(dispatch) {
 //     dispatch({ type: UNAUTH_USER });
 //     localStorage.removeItem('token');
 // }
-
+export function unAuthUserLocally(dispatch) {
+	localStorage.removeItem('jwt');
+	dispatch({
+		type: UNAUTH_USER.FINISH,
+	});
+}
 export function unAuthUser() {
 	return async function _dispatcher_(dispatch) {
 		dispatch({ type: UNAUTH_USER.START });
+		// axios interceptor is too late if there is a preflight
+		const jwt = localStorage.getItem('jwt');
 		try {
-			await axiosApi({
+			axiosApiPure({
 				method: 'delete',
 				url: '/auth',
+				headers: { Authorization: `Bearer ${jwt}` },
 			});
-			localStorage.removeItem('jwt');
-			dispatch({ type: UNAUTH_USER.FINISH });
-			// localStorage.removeItem('token');
+			unAuthUserLocally();
 			// // signoutUser(dispatch);
 		} catch (err) {
 			console.log('error deleting token', err);
