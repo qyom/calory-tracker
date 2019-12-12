@@ -1,4 +1,9 @@
 export const SET_MEALS = 'SET_MEALS';
+export const ADD_MEAL = Object.freeze({
+	START: 'ADD_MEAL_START',
+	FINISH: 'ADD_MEAL_FINISH',
+	ERROR: 'ADD_MEAL_ERROR'
+});
 export const UPDATE_MEAL = 'UPDATE_MEAL';
 export const DELETE_MEAL = 'DELETE_MEAL';
 

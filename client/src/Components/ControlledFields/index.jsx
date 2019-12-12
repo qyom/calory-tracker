@@ -4,10 +4,16 @@ import classnames from 'classnames';
 import styles from './styles.module.scss';
 import memberLike from 'PropTypes/memberLike';
 import DateTimePicker from 'react-datetime-picker';
+import Select from 'react-select'
 import moment from 'moment';
 
 import { isFunction } from 'lodash';
 import { attribute } from 'postcss-selector-parser';
+
+const customInputs = {
+	dateTime: 'dateTime',
+	select: 'select'
+};
 
 export default class ControlFields extends Component {
 	static propTypes = {
@@ -74,13 +80,12 @@ export default class ControlFields extends Component {
 	}
 	handleFieldChange = (config, event) => {
 		this.setState({
-			[config.name]: config.type === 'dateTime' ? event : event.target.value,
+			[config.name]: customInputs[config.type] ? event : event.target.value,
 		});
 	};
 
 	renderFieldSets() {
-		const { fieldConfigs, isEditMode } = this.props;
-
+		const { fieldConfigs, isEditMode, fieldOptions } = this.props;
 		const fieldSets = fieldConfigs.map(config => {
 			const {
 				isValueHidden,
@@ -127,6 +132,24 @@ export default class ControlFields extends Component {
 						clearIcon={null}
 					/>
 				);
+			}
+
+			if(type === 'radioGroup' && isEditMode) {
+				input =  (
+					<fieldset className={styles.input}>
+					 {fieldOptions[name].map((option) =>{
+						return ( 
+							<label key={option}>
+								<input name={name} type='radio' value={option} checked={option === fieldValue} 
+									onChange={event => {this.handleFieldChange(config, event) }} 
+								/>
+								<span className={styles.radioLabel}>{option}</span>
+							</label>
+						)
+					 })}		
+
+					</fieldset>			
+				)
 			}
 
 			return (

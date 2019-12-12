@@ -6,10 +6,18 @@ import styles from './styles.module.scss';
 import Spinner from 'Components/Spinner';
 import fieldConfigs from './fieldConfigs';
 import ViewHeader from 'Components/ViewHeader';
+import Modal from 'Components/Modals';
 import { fetchMember, deleteMember, unAuthUser, updateMember } from 'Actions';
 import ControlledFields from 'Components/ControlledFields';
 import getRelevantMemberValues from 'Utils/getRelevantMemberValues';
+import { ROLE_TYPES } from 'Utils/getIfAllowed';
 import classnames from 'classnames';
+
+const roleOptions = {
+	[ROLE_TYPES.ADMIN]: [ ROLE_TYPES.ADMIN, ROLE_TYPES.MANAGER,  ROLE_TYPES.REGULAR ],
+	[ROLE_TYPES.MANAGER]: [ ROLE_TYPES.MANAGER,  ROLE_TYPES.REGULAR ],
+	[ROLE_TYPES.REGULAR]: [ ROLE_TYPES.REGULAR ],
+}
 
 export const memberPropTypes = PropTypes.shape({
 	firstName: PropTypes.string.isRequired,
@@ -30,7 +38,7 @@ class Account extends Component {
 		}).isRequired,
 	};
 
-	state = { isEditMode: false };
+	state = { isEditMode: false, deleteUserModal: false };
 
 	setupFieldsDataExternalControlers = (getFieldValues, setFieldValues) => {
 		this.getFieldValues = getFieldValues;
@@ -99,9 +107,15 @@ class Account extends Component {
 		this.toggleEditMode();
 	};
 
+	toggleDeleteConfirmModal = () =>{
+		let deleteUserModal  = !this.state.deleteUserModal;
+		this.setState({deleteUserModal});
+	}
+
 	handleDeleteClick = event => {
 		event.preventDefault();
 		const { memberId } = this.props.member;
+		this.toggleDeleteConfirmModal();
 		this.props.deleteMember({ memberId, isDeletingSelf: this.isMemberTheUser });
 	};
 
@@ -114,7 +128,7 @@ class Account extends Component {
 	previousMember = this.props.member;
 
 	render() {
-		const { userId, member } = this.props;
+		const { userId, member, user } = this.props;
 		const isMemberDeleted = this.previousMember && !member;
 
 		if (isMemberDeleted) {
@@ -127,7 +141,7 @@ class Account extends Component {
 			return <Spinner />;
 		}
 
-		const { isEditMode } = this.state;
+		const { isEditMode, deleteUserModal } = this.state;
 		const { firstName, lastName, memberId } = this.props.member;
 
 		let headerMessage = `${firstName} ${lastName}'s account`;
@@ -150,6 +164,7 @@ class Account extends Component {
 					fieldConfigs={fieldConfigs}
 					fieldValues={member}
 					isEditMode={isEditMode}
+					fieldOptions={{roleType: roleOptions[user.roleType]}}
 					setupFieldsDataExternalControlers={
 						this.setupFieldsDataExternalControlers
 					}
@@ -180,10 +195,20 @@ class Account extends Component {
 				)}
 				<button
 					className={classnames(styles.secondaryBtn, styles.cntlBtn)}
-					onClick={this.handleDeleteClick}
+					onClick={this.toggleDeleteConfirmModal}
 				>
 					Delete
 				</button>
+
+				<Modal
+					isVisible={deleteUserModal}
+					title={`Are you sure you want to delete ${firstName} ${lastName}?`}
+				
+					controls={[
+						{ text: 'Delete', primary: true, onClick: this.handleDeleteClick },
+						{ text: 'Cancel', onClick: this.toggleDeleteConfirmModal },
+					]}
+				/>
 			</div>
 		);
 	}
@@ -193,7 +218,7 @@ function mapStateToProps(state, ownProps) {
 	const { user, members } = state;
 	const { memberId: routeMemberId } = ownProps.match.params;
 	const member = members.find(member => member.memberId === routeMemberId);
-	return { member, userId: user.data.memberId };
+	return { member, userId: user.data.memberId, user: user.data };
 }
 export default connect(mapStateToProps, {
 	updateMember,

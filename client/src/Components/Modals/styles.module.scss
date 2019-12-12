@@ -1,5 +1,6 @@
 @import 'Mixins/mealsMixins.scss';
 @include buttons;
+@include errors;
 
 .modalWrapper {
 	width: 100vw;

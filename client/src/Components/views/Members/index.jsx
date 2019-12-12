@@ -32,7 +32,7 @@ class Members extends Component {
 					onClick={event => {
 						this.handleMemberClick(member.memberId);
 					}}
-					key={member.memberId + ''}
+					key={member.memberId}
 					className={styles.tr}
 				>
 					<td className={styles.td}>

@@ -21,7 +21,7 @@ export default class MealGroup extends Component {
 	}
 
 	render() {
-		const { meals } = this.props;
+		const { meals, maxCaloriesPerDay } = this.props;
 		const { calories, formattedDate, numberOfMeals } = getMealGroupSummary(
 			meals,
 		);
@@ -33,6 +33,7 @@ export default class MealGroup extends Component {
 					formattedDate={formattedDate}
 					numberOfMeals={numberOfMeals}
 					handleGroupClick={this.handleGroupClick}
+					maxCaloriesPerDay={maxCaloriesPerDay}
 				/>
 				{isDetailsVisible && <MealGroupDetails meals={meals} />}
 			</li>

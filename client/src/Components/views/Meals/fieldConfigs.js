@@ -10,7 +10,7 @@ export default [
 		label: 'Calories',
 	},
 	{
-		name: 'date',
+		name: 'dateIntake',
 		type: 'dateTime',
 		label: 'Date/Time',
 	}

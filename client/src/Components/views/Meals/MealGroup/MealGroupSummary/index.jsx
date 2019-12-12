@@ -4,7 +4,9 @@ import classnames from 'classnames';
 import styles from './styles.module.scss';
 
 export default function MealGroup(props) {
-	const { formattedDate, numberOfMeals, calories, handleGroupClick } = props;
+	const { formattedDate, numberOfMeals, calories, handleGroupClick, maxCaloriesPerDay } = props;
+		console.log('calories----', calories, maxCaloriesPerDay)
+	const warnMode = calories > maxCaloriesPerDay;
 
 	return (
 		<ul className={styles.row} onClick={handleGroupClick}>
@@ -14,7 +16,9 @@ export default function MealGroup(props) {
 			<li className={classnames(styles.cell, styles.quantity)}>
 				{numberOfMeals}
 			</li>
-			<li className={classnames(styles.cell, styles.calories)}>{calories}</li>
+			<li className={classnames(styles.cell, styles.calories, warnMode ? styles.warnMode : styles.safeMode)}>
+				{calories}
+			</li>
 		</ul>
 	);
 }

@@ -1,12 +1,8 @@
-import { get } from 'lodash';
+import moment from 'moment';
 
-function convertToDate(value) {
-	return new Date(value);
-}
-
-function identity(value) {
-	return value;
-}
+const stringToDate = value => new Date(value);
+const dateToString = date => moment(date).format("YYYY-MM-DD HH:mm:ss");
+const identity = value => value;
 
 function transform(values, configs = {}) {
 	const transformedValues = Object.keys(values).reduce(
@@ -31,55 +27,29 @@ function transform(values, configs = {}) {
 }
 
 export function normalizeMeal(meal) {
-	// return {
-	// 	memberId: String(meal.member_id),
-	// 	mealId: String(meal.meal_id),
-	// 	name: String(meal.name),
-	// 	calories: Number(meal.calories),
-	// 	dateIntake: new Date(meal.date_intake),
-	// 	dateCreated: new Date(meal.date_created),
-	// };
 	const configs = {
 		member_id: { transformer: String, key: 'memberId' },
 		meal_id: { transformer: String, key: 'mealId' },
 		name: { transformer: String, key: 'name' },
 		calories: { transformer: Number, key: 'calories' },
-		date_intake: { transformer: convertToDate, key: 'dateIntake' },
-		date_created: { transformer: convertToDate, key: 'dateCreated' },
+		date_intake: { transformer: stringToDate, key: 'dateIntake' },
+		created_at: { transformer: stringToDate, key: 'createdAt' },
 	};
 	return transform(meal, configs);
 }
 export function denormalizeMeal(meal) {
-	// return {
-	// 	member_id: String(meal.memberId),
-	// 	meal_id: String(meal.mealId),
-	// 	name: String(meal.name),
-	// 	calories: Number(meal.calories),
-	// 	date_intake: String(meal.dateIntake),
-	// 	date_created: String(meal.dateCreated),
-	// };
 	const configs = {
 		memberId: { transformer: String, key: 'member_id' },
 		mealId: { transformer: String, key: 'meal_id' },
 		name: { transformer: String, key: 'name' },
-		calories: { transformer: Number, key: 'calories' },
-		dateIntake: { transformer: String, key: 'date_intake' },
-		dateCreated: { transformer: String, key: 'date_created' },
+		calories: { transformer: String, key: 'calories' },
+		dateIntake: { transformer: dateToString, key: 'date_intake' },
+		createdAt: { transformer: String, key: 'created_at' },
 	};
 	return transform(meal, configs);
 }
 
 export function normalizeMember(member) {
-	// return {
-	// 	memberId: String(member.member_id),
-	// 	roleType: String(member.role_type),
-	// 	email: String(member.email),
-	// 	firstName: String(member.first_name),
-	// 	lastName: String(member.last_name),
-	// 	maxCaloriesPerDay: Number(member.max_calories_per_day),
-	// 	createdAt: new Date(member.created_at),
-	// 	updatedAt: new Date(member.updated_at),
-	// };
 	const configs = {
 		member_id: { transformer: String, key: 'memberId' },
 		role_type: { transformer: String, key: 'roleType' },
@@ -87,8 +57,8 @@ export function normalizeMember(member) {
 		first_name: { transformer: String, key: 'firstName' },
 		last_name: { transformer: String, key: 'lastName' },
 		max_calories_per_day: { transformer: Number, key: 'maxCaloriesPerDay' },
-		created_at: { transformer: convertToDate, key: 'createdAt' },
-		updated_at: { transformer: convertToDate, key: 'updatedAt' },
+		created_at: { transformer: stringToDate, key: 'createdAt' },
+		updated_at: { transformer: stringToDate, key: 'updatedAt' },
 	};
 	return transform(member, configs);
 }
@@ -101,8 +71,8 @@ export function denormalizeMember(member) {
 		firstName: { transformer: String, key: 'first_name' },
 		lastName: { transformer: String, key: 'last_name' },
 		maxCaloriesPerDay: { transformer: Number, key: 'max_calories_per_day' },
-		createdAt: { transformer: convertToDate, key: 'created_at' },
-		updatedAt: { transformer: convertToDate, key: 'updated_at' },
+		createdAt: { transformer: stringToDate, key: 'created_at' },
+		updatedAt: { transformer: stringToDate, key: 'updated_at' },
 		password: { transformer: String, key: 'password', isTruthy: true },
 		confirmPassword: {
 			transformer: String,

@@ -21,8 +21,8 @@ export default [
 	},
 	{
 		name: 'roleType',
-		type: 'select',
-		label: 'Role type',
+		type: 'radioGroup',
+		label: 'Role type'
 	},
 	{
 		name: 'password',

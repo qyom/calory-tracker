@@ -1,16 +1,22 @@
 import React from 'react';
-import DateRange from '../DateRange'
-import TimeRange from '../TimeRange'
+import DateRange from 'Components/Filters/DateRange';
+import TimeRange from 'Components/Filters/TimeRange';
 import classnames from 'classnames';
 import styles from './styles.module.scss';
 
 export default function DateTimeFilter(props) {
-	const { onDateRangeChange,onTimeRangeChange,
-	 dateRange, timeRange, onFilter, onReset }  = props;
+	const {
+		onDateRangeChange,
+		onTimeRangeChange,
+		dateRange,
+		timeRange,
+		onFilter,
+		onReset,
+	} = props;
 
-	return (	
+	return (
 		<div className={styles.Filters}>
-			<div className={styles.labelGroup}> 
+			<div className={styles.labelGroup}>
 				<label className={styles.filterLabel}>Date</label>
 				<label className={styles.filterLabel}>Time</label>
 			</div>
@@ -25,7 +31,7 @@ export default function DateTimeFilter(props) {
 				</label>
 			</div>
 			<div className={styles.DateTimeFilterGroup}>
-				<DateRange 
+				<DateRange
 					onChange={onDateRangeChange}
 					value={dateRange}
 					disableClock={true}
@@ -41,15 +47,19 @@ export default function DateTimeFilter(props) {
 				/>
 			</div>
 			<div className={styles.filterControls}>
-				<button className={classnames(styles.cntlBtn, styles.primaryBtn)}
-					onClick={onFilter}>
+				<button
+					className={classnames(styles.cntlBtn, styles.primaryBtn)}
+					onClick={onFilter}
+				>
 					Filter
 				</button>
-				<button className={classnames(styles.cntlBtn, styles.secondaryBtn)}
-					onClick={onReset}>
+				<button
+					className={classnames(styles.cntlBtn, styles.secondaryBtn)}
+					onClick={onReset}
+				>
 					Reset
 				</button>
 			</div>
 		</div>
-	)
+	);
 }

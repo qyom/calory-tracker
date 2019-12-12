@@ -1,3 +1,5 @@
 @import 'Mixins/mealsMixins.scss';
 @include formPage;
 @include buttons;
+@include pageCntls;
+@include errors;

@@ -23,7 +23,7 @@ library.add(faEdit, faSave, faTrashAlt, faTimesCircle);
 export const mealPropTypes = PropTypes.shape({
 	calories: PropTypes.number.isRequired,
 	dateIntake: PropTypes.object.isRequired,
-	dateCreated: PropTypes.object.isRequired,
+	createdAt: PropTypes.object.isRequired,
 	mealId: PropTypes.string.isRequired,
 	memberId: PropTypes.string.isRequired,
 	name: PropTypes.string,

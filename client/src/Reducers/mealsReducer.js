@@ -1,16 +1,32 @@
+import _ from 'lodash';
 import update from 'immutability-helper';
 
-import { SET_MEALS, UPDATE_MEAL, DELETE_MEAL } from 'Constants/actionTypes';
-import moment from 'moment';
+import { SET_MEALS, ADD_MEAL, UPDATE_MEAL, DELETE_MEAL } from 'Constants/actionTypes';
 
-const initialState = {};
+const initialState = {data:[], control:{add:{processing:false, error:{}}}};
 
 export default function mealsReducer(state = initialState, action) {
 	switch (action.type) {
+		  
 		case SET_MEALS: {
 			// todo -update url
 			const { meals, memberId } = action.payload;
-			return { ...state, [memberId]: meals };
+			return update(state, {data: {[memberId]: {$set: meals}}});
+		}
+		case ADD_MEAL.START: {
+			return update(state, {control: {add: {processing: {$set: true}}}});
+		}
+		case ADD_MEAL.FINISH: {
+			const { meal } = action.payload;
+			// const memberMeals = state[meal.memberId] || [];
+			return update(state, {
+				data: {[meal.memberId]: {$push: [meal]}},
+				control: {add: {processing: {$set: false}, error:{$set: {}}}}
+			});
+		}
+		case ADD_MEAL.ERROR: {
+			console.log("error payload", action.payload);
+			return update(state, {control: {add: {processing: {$set: false}, error: {$set: action.payload.error.data}}}});
 		}
 		case UPDATE_MEAL: {
 			const { meal } = action.payload;

@@ -10,35 +10,56 @@ import classnames from 'classnames';
 import styles from './styles.module.scss';
 
 class Login extends Component {
+
 	static propTypes = {
 		isAuthenticated: PropTypes.bool.isRequired,
 	};
+
 	state = {
 		email: '',
 		password: '',
 	};
+
 	handleSubmit = event => {
 		event.preventDefault();
 		const { email, password } = this.state;
-		// console.log('submitting', email, password);
 		this.props.authUser({ email, password });
 	};
+
 	handleEmailChange = event => {
 		this.setState({ email: event.target.value });
 	};
+
 	handlePasswordChange = event => {
 		this.setState({ password: event.target.value });
 	};
+
+	allowSubmit = () => {
+		const { email, password } = this.state;
+		return email && email.length > 0 &&
+		 password && password.length > 0;
+	}
+
 	render() {
 		if (this.props.isAuthenticated) {
 			return <Redirect to="/" />;
 		}
 		const { email, password } = this.state;
-		const { isLoading } = this.props;
+		const { isLoading, authError } = this.props;
+		const btnStyle = this.allowSubmit() ? 
+			(isLoading ? styles.activeBtn : styles.primaryBtn)
+			: styles.disabledBtn;
+
 		return (
 			<div className={styles.FormPage}>
 				<ViewHeader>
 					Log In
+					{ authError ? 
+						<div className={styles.pageCntls}>
+							<span className={styles.pageError}>Invalid Credentials</span>
+						</div>
+						: null
+					}
 				</ViewHeader>
 				<form action="" onSubmit={this.handleSubmit} className={styles.form}>
 					<div className={styles.inputGroup}>
@@ -57,7 +78,7 @@ class Login extends Component {
 							/>
 						</label>
 					</div>
-					<button className={classnames(isLoading ? styles.activeBtn : styles.primaryBtn, styles.cntlBtn)} 
+					<button className={classnames(btnStyle, styles.cntlBtn)} 
 						type="submit">
 						{isLoading ? <Spinner small={true} /> : 'Sign In'}
 					</button>
@@ -68,6 +89,6 @@ class Login extends Component {
 }
 
 function mapStateToPros({ user }) {
-	return { isAuthenticated: !!user.data, isLoading: user.isLoading};
+	return { isAuthenticated: !!user.data, isLoading: user.isLoading, authError: user.error};
 }
 export default connect(mapStateToPros, { authUser })(Login);

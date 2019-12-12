@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import _ from "lodash";
 import { connect } from 'react-redux';
 import styles from './styles.module.scss';
 import { Link } from 'react-router-dom';
@@ -9,7 +10,7 @@ import ViewHeader from 'Components/ViewHeader';
 import DateTimeRangeFilter from 'Components/Filters/DateTimeFilter';
 import groupMealsByPeriod from 'Utils/groupMealsByPeriod';
 import Spinner from 'Components/Spinner';
-import { fetchMeals, fetchMember } from 'Actions';
+import { fetchMeals, addMeal, fetchMember } from 'Actions';
 import PropTypes from 'prop-types';
 import { memberPropTypes } from 'Components/views/Account';
 import { mealPropTypes } from 'Components/views/Meals/MealGroup/MealGroupDetails/Meal';
@@ -22,15 +23,16 @@ class Meals extends Component {
 	state = {
 		dateRange: null,
 		timeRange: null,
-		intake_date_from: null,
-		intake_date_to: null,
-		intake_hours_from: null,
-		intake_hours_to: null,
-		isModalVisible: false,
+		intakeDateFrom: null,
+		intakeDateTo: null,
+		intakeHoursFrom: null,
+		intakeHoursTo: null,
+		isModalVisible: false
 	};
 
 	static propTypes = {
 		meals: PropTypes.arrayOf(mealPropTypes),
+		control: PropTypes.object,
 		member: memberPropTypes,
 		match: PropTypes.shape({
 			params: PropTypes.shape({
@@ -48,10 +50,17 @@ class Meals extends Component {
 		}
 		fetchMeals({ memberId });
 	}
+	componentDidUpdate(prevProps) {
+		const {processing, error} = this.props.control.add;
+		if (this.state.isModalVisible && prevProps.control.add.processing && !processing && _.isEmpty(error) ) {
+			this.toggleAddModal();
+		}
+	}
 
 	renderMealGroupList() {
-		const { meals } = this.props;
+		const { meals, member } = this.props;
 		const mealGroups = groupMealsByPeriod(meals);
+		console.log('member---', member, 'meals -- ', meals)
 		return (
 			<ul className={styles.MealGroupList}>
 				<MealGroupHeaders />
@@ -61,6 +70,7 @@ class Meals extends Component {
 						key={index}
 						rowClassName={styles.row}
 						cellClassName={styles.cell}
+						maxCaloriesPerDay={member.maxCaloriesPerDay}
 					/>
 				))}
 			</ul>
@@ -70,9 +80,9 @@ class Meals extends Component {
 	onDateRangeChange = dateRange => {
 		const from = dateRange && dateRange[0],
 			to = dateRange && dateRange[1];
-		const intake_date_from = from && moment(from).format('YYYY-MM-DD'),
-			intake_date_to = to && moment(to).format('YYYY-MM-DD');
-		this.setState({ intake_date_from, intake_date_to, dateRange });
+		const intakeDateFrom = from && moment(from).format('YYYY-MM-DD'),
+			intakeDateTo = to && moment(to).format('YYYY-MM-DD');
+		this.setState({ intakeDateFrom, intakeDateTo, dateRange });
 	};
 
 	getHour(hour) {
@@ -87,33 +97,45 @@ class Meals extends Component {
 	onTimeRangeChange = timeRange => {
 		const from = timeRange && timeRange[0],
 			to = timeRange && timeRange[1];
-		const intake_hours_from = from && this.getHour(from),
-			intake_hours_to = to && this.getHour(to);
-		this.setState({ intake_hours_from, intake_hours_to, timeRange });
+		const intakeHoursFrom = from && this.getHour(from),
+			intakeHoursTo = to && this.getHour(to);
+		this.setState({ intakeHoursFrom, intakeHoursTo, timeRange });
 	};
 
-	resetFilter = () => {
+	handleResetClick = () => {
 		this.setState({
-			intake_date_from: null,
-			intake_date_to: null,
-			intake_hours_from: null,
-			intake_hours_to: null,
+			intakeDateFrom: null,
+			intakeDateTo: null,
+			intakeHoursFrom: null,
+			intakeHoursTo: null,
 			dateRange: null,
 			timeRange: null,
 		});
+		const { memberId } = this.props.match.params;
+		this.props.fetchMeals({ memberId });
 	};
 
-	filterMeals = () => {
+	handleFilterClick = () => {
 		const {
-			intake_date_from,
-			intake_date_to,
-			intake_hours_from,
-			intake_hours_to,
+			intakeDateFrom,
+			intakeDateTo,
+			intakeHoursFrom,
+			intakeHoursTo,
 		} = this.state;
+		const { memberId } = this.props.match.params;
 		console.log(
 			'CALL FILTER API',
-			intake_date_from + ' / ' + intake_date_to,
-			intake_hours_from + ' - ' + intake_hours_to,
+			intakeDateFrom + ' / ' + intakeDateTo,
+			intakeHoursFrom + ' - ' + intakeHoursTo,
+		);
+		this.props.fetchMeals(
+			{ memberId },
+			{
+				intakeDateFrom,
+				intakeDateTo,
+				intakeHoursFrom,
+				intakeHoursTo,
+			},
 		);
 	};
 
@@ -123,16 +145,17 @@ class Meals extends Component {
 	};
 
 	handleNewMealSubmit = () => {
-		const fieldData = this.getFieldValues;
-	};
-
+		const fieldValues = this.getFieldValues();
+		console.log("submitting a new meal", fieldValues);
+		this.props.addMeal(this.props.member, fieldValues);
+	}
 	setupFieldsDataExternalControlers = (getFieldValues, setFieldValues) => {
 		this.getFieldValues = getFieldValues;
 		this.setFieldValues = setFieldValues;
 	};
 
 	render() {
-		const { meals, member, userId } = this.props;
+		const { meals, member, userId, control } = this.props;
 		if (!meals || !member) {
 			return <Spinner />;
 		}
@@ -165,8 +188,8 @@ class Meals extends Component {
 					onTimeRangeChange={this.onTimeRangeChange}
 					dateRange={this.state.dateRange}
 					timeRange={this.state.timeRange}
-					onFilter={this.filterMeals}
-					onReset={this.resetFilter}
+					onFilter={this.handleFilterClick}
+					onReset={this.handleResetClick}
 				/>
 
 				{this.renderMealGroupList()}
@@ -185,6 +208,7 @@ class Meals extends Component {
 						{ text: 'Add', primary: true, onClick: this.handleNewMealSubmit },
 						{ text: 'Cancel', onClick: this.toggleAddModal },
 					]}
+					state={control.add}
 				/>
 			</div>
 		);
@@ -192,12 +216,11 @@ class Meals extends Component {
 }
 
 function mapStateToProps(state, ownProps) {
-	const { allMeals, members, user } = state;
+	const { meals, members, user } = state;
 
 	const { memberId: routeMemberId } = ownProps.match.params;
 	const member = members.find(member => member.memberId === routeMemberId);
-
-	return { meals: allMeals[routeMemberId], member, userId: user.data.memberId };
+	return { meals: meals.data[routeMemberId], control: meals.control, member, userId: user.data.memberId };
 }
 
-export default connect(mapStateToProps, { fetchMeals, fetchMember })(Meals);
+export default connect(mapStateToProps, { fetchMeals, fetchMember, addMeal })(Meals);

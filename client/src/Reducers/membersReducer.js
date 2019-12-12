@@ -14,7 +14,7 @@ const initialState = [];
 export default function mealsReducer(state = initialState, action) {
 	switch (action.type) {
 		case SET_MEMBERS: {
-			const { members } = action.payload;
+			const members = action.payload;
 			// console.log("data: ", data);
 			return members;
 		}

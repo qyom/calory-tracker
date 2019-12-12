@@ -33,13 +33,21 @@ class Signup extends Component {
 	};
 
 	render() {
-		const { isLoading } = this.props;
+		const { isLoading, authError } = this.props;
 		if (this.props.isAuthenticated) {
 			return <Redirect to="/" />;
 		}
 		return (
 			<div className={styles.FormPage}>
-				<ViewHeader>Sign Up</ViewHeader>
+				<ViewHeader>
+					Sign Up
+					{ authError ? 
+						<div className={styles.pageCntls}>
+							<span className={styles.pageError}>User Exists</span>
+						</div>
+						: null
+					}
+				</ViewHeader>
 				<ControlledFields
 					fieldConfigs={fieldConfigs}
 					// fieldValues={
@@ -74,6 +82,6 @@ class Signup extends Component {
 }
 
 function mapStateToPros({ user }) {
-	return { isAuthenticated: !!user.data, isLoading: user.isLoading };
+	return { isAuthenticated: !!user.data, isLoading: user.isLoading, authError: user.error };
 }
 export default connect(mapStateToPros, { authUser, createUser })(Signup);

@@ -18,7 +18,7 @@ export function fetchMembers() {
 			const normalizedMembers = res.data.map(normalizeMember);
 			dispatch({
 				type: SET_MEMBERS,
-				payload: { members: normalizedMembers },
+				payload: normalizedMembers,
 			});
 		} catch (err) {
 			console.log('problem while fetching data: ', err);
@@ -36,7 +36,7 @@ export function fetchMember({ memberId }) {
 		try {
 			const res = await axiosApi.get(`/member/${memberId}`);
 			const normalizedMember = normalizeMember(res.data);
-			addMemberToState(dispatch, { member: normalizedMember });
+			addMemberToState(dispatch, normalizedMember);
 		} catch (err) {
 			console.log('problem while fetching data: ', err);
 			// if (err.response.status === 401) {
@@ -129,7 +129,7 @@ export function createMember(member = {}) {
 			});
 
 			const normalizedMember = normalizeMember(res.data);
-			addMemberToState(dispatch, { member: normalizedMember });
+			addMemberToState(dispatch, normalizedMember);
 		} catch (err) {
 			console.log('problem while fetching data: ', err);
 			// if (err.response.status === 401) {

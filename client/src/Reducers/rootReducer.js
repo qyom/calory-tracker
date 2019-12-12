@@ -7,7 +7,7 @@ import mealsReducer from './mealsReducer';
 const rootReducer = combineReducers({
 	user: userReducer,
 	members: membersReducer,
-	allMeals: mealsReducer,
+	meals: mealsReducer,
 });
 
 export default rootReducer;

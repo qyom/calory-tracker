@@ -29,6 +29,14 @@
 			/*// flex-grow: 0;*/
 		}
 	}
+
+	.warnMode {
+		color: #f54b4b;
+	}
+
+	.safeMode {
+		color: #14b707;
+	}
 }
 
 @mixin buttons {
@@ -77,6 +85,12 @@
 
 	.linkBtn:hover {
 		text-decoration: underline;
+		color: #999999;
+	}
+
+	.disabledBtn {
+		background-color: #e2e2e2;
+		pointer-events: none;
 		color: #999999;
 	}
 }
@@ -151,4 +165,27 @@
 		outline: none;
 	}
 
+	.select {
+	    height: 30px;
+	 	border: 1px solid #cccccc;
+
+	}
+
+}
+
+@mixin errors {
+	.pageError {
+		color: #f54b4b;
+		font-size: 14px;
+	}
+}
+
+@mixin errors {
+	.errorBox {
+		// border: 1px solid #f54b4b;
+		color: #f54b4b;
+		font-size: 14px;
+		margin: 5px;
+		padding:3px;
+	}
 }
