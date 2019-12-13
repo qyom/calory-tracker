@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import styles from './styles.module.scss';
 import DateTimePicker from 'react-datetime-picker';
+import ButtonGroup from 'Components/ButtonGroup';
 
 import { isFunction } from 'lodash';
 
@@ -132,6 +133,7 @@ export default class ControlFields extends Component {
 							<label key={option}>
 								<input name={name} type='radio' value={option} checked={option === fieldValue} 
 									onChange={event => {this.handleFieldChange(config, event) }} 
+									required={config.required}
 								/>
 								<span className={styles.radioLabel}>{option}</span>
 							</label>
@@ -154,8 +156,19 @@ export default class ControlFields extends Component {
 	}
 
 	render() {
+		const { onSubmit, controls, state } = this.props;
 		return (
-			<form className={styles.ControlledFields}>{this.renderFieldSets()}</form>
+			<form className={styles.ControlledFields} onSubmit={onSubmit}>
+				{this.renderFieldSets()}
+				{controls ?
+					<div className={styles.controlsGroup}>
+						<ButtonGroup controls={controls}
+								 processing={state && state.processing }
+						 	/>
+					</div>
+					: null
+				}
+			</form>
 		);
 	}
 }

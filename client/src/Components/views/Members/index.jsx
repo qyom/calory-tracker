@@ -138,12 +138,14 @@ class Members extends Component {
 								this.setupFieldsDataExternalControlers
 							}
 							fieldOptions={{ roleType: roleOptions[this.props.user.roleType] }}
+							controls={[
+								{ text: 'Add', primary: true, type: 'submit' },
+								{ text: 'Cancel', onClick: this.toggleAddModal },
+							]}
+							onSubmit={this.handleAddMemberClick}
 						/>
 					}
-					controls={[
-						{ text: 'Add', primary: true, onClick: this.handleAddMemberClick },
-						{ text: 'Cancel', onClick: this.toggleAddModal },
-					]}
+					
 				/>
 			</div>
 		);

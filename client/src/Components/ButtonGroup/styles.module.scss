@@ -1,0 +1,10 @@
+@import 'Mixins/mealsMixins.scss';
+@include buttons;
+
+.disabled {
+	pointer-events: none;
+}
+
+.enabled {
+	pointer-events: initial;
+}

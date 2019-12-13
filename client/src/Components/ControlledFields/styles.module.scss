@@ -2,7 +2,7 @@
 @include formPage;
 
 .ControlledFields {
-	margin: 30px 0;
+	margin: 30px 0 0;
 }
 
 .box {
@@ -32,4 +32,9 @@
 
 .radioGroupLabel {
     margin-top: 10px;
+}
+
+.controlsGroup {
+    text-align: center;
+    margin-top: 50px;
 }

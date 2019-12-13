@@ -51,15 +51,17 @@ class Signup extends Component {
 						this.setupFieldsDataExternalControlers
 					}
 				/>
-				<button
-					className={classnames(
-						isLoading ? styles.activeBtn : styles.primaryBtn,
-						styles.cntlBtn,
-					)}
-					onClick={this.handleSubmit}
-				>
-					{isLoading ? <Spinner small={true} /> : 'Submit'}
-				</button>
+				<div className={styles.pageControls}>
+					<button
+						className={classnames(
+							isLoading ? styles.activeBtn : styles.primaryBtn,
+							styles.cntlBtn
+						)}
+						onClick={this.handleSubmit}
+					>
+						{isLoading ? <Spinner small={true} /> : 'Submit'}
+					</button>
+				</div>
 			</div>
 		);
 	}

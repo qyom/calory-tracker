@@ -169,36 +169,38 @@ class Account extends Component {
 						this.setupFieldsDataExternalControlers
 					}
 				/>
-				{!isEditMode && (
-					<button
-						className={classnames(styles.primaryBtn, styles.cntlBtn)}
-						onClick={this.handleEditClick}
-					>
-						Edit
-					</button>
-				)}
-				{isEditMode && (
-					<button
-						className={classnames(styles.primaryBtn, styles.cntlBtn)}
-						onClick={this.handleSaveClick}
-					>
-						Save
-					</button>
-				)}
-				{isEditMode && (
+				<div className={styles.formControls}>
+					{!isEditMode && (
+						<button
+							className={classnames(styles.primaryBtn, styles.cntlBtn)}
+							onClick={this.handleEditClick}
+						>
+							Edit
+						</button>
+					)}
+					{isEditMode && (
+						<button
+							className={classnames(styles.primaryBtn, styles.cntlBtn)}
+							onClick={this.handleSaveClick}
+						>
+							Save
+						</button>
+					)}
+					{isEditMode && (
+						<button
+							className={classnames(styles.secondaryBtn, styles.cntlBtn)}
+							onClick={this.handleCancelClick}
+						>
+							Cancel
+						</button>
+					)}
 					<button
 						className={classnames(styles.secondaryBtn, styles.cntlBtn)}
-						onClick={this.handleCancelClick}
+						onClick={this.toggleDeleteConfirmModal}
 					>
-						Cancel
+						Delete
 					</button>
-				)}
-				<button
-					className={classnames(styles.secondaryBtn, styles.cntlBtn)}
-					onClick={this.toggleDeleteConfirmModal}
-				>
-					Delete
-				</button>
+				</div>
 
 				<Modal
 					isVisible={deleteUserModal}

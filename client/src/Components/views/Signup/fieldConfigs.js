@@ -35,6 +35,7 @@ export default [
 		label: 'password',
 		isValueHidden: true,
 		defaultValue: 'pass123',
+		minlength: 6
 	},
 	{
 		name: 'confirmPassword',
@@ -42,5 +43,6 @@ export default [
 		label: 'confirm password',
 		isValueHidden: true,
 		defaultValue: 'pass123',
+		minlength: 6
 	},
 ];

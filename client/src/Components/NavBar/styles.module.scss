@@ -28,6 +28,10 @@
 	border: none;
 }
 
+.disabled {
+	pointer-events: none;	
+}
+
 .greeting {
 	color: #CCC;
 }

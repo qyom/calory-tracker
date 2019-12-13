@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './styles.module.scss';
 import ReactDOM from 'react-dom';
 import classnames from 'classnames';
-import Spinner from '../Spinner';
+import ButtonGroup from 'Components/ButtonGroup';
 
 import _ from "lodash";
 
@@ -10,6 +10,7 @@ export default function Modal(props) {
 
 	const createModal = () => {
 		const errors = _.get(props, 'state.error.data', null);
+
 		return (
 			<div className={styles.modalWrapper}>
 				<div className={styles.modalBody}>
@@ -22,17 +23,15 @@ export default function Modal(props) {
 							))}
 						</div>
 					: null}
-			 		<div className={styles.modalControls}> 
-						{ props.state && props.state.processing
-							? <Spinner small={true} />
-							: props.controls.map((control, i) => {
-								const btn = control.primary ? styles.primaryBtn : styles.secondaryBtn
-								return <button key={i} onClick={control.onClick} className={classnames(styles.cntlBtn, btn)}>  
-									{control.text} 
-								</button>
-							})
-						}
-			 		 </div>
+					{ props.controls ?
+						<div className={styles.modalControls}>
+							<ButtonGroup controls={props.controls}
+								 processing={props.state &&props.state.processing}
+						 	/>
+						</div>
+						: null
+					}
+			 	
 			 	</div>
 			</div>
 		)

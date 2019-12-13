@@ -164,10 +164,12 @@ class Meals extends Component {
 		this.setState({ isModalVisible });
 	};
 
-	handleNewMealSubmit = () => {
+	handleNewMealSubmit = (e) => {
+		e.preventDefault();
 		const fieldValues = this.getFieldValues();
 		console.log('submitting a new meal', fieldValues);
 		this.props.addMeal(this.props.member, fieldValues);
+
 	};
 	setupFieldsDataExternalControlers = (getFieldValues, setFieldValues) => {
 		this.getFieldValues = getFieldValues;
@@ -244,16 +246,19 @@ class Meals extends Component {
 							setupFieldsDataExternalControlers={
 								this.setupFieldsDataExternalControlers
 							}
+							controls={[
+								{
+									text: 'Add',
+									primary: true,
+									type: 'submit'
+								},
+								{ text: 'Cancel', onClick: this.toggleAddModal }
+							]}
+							onSubmit={this.handleNewMealSubmit}
+							state={control.add}
 						/>
 					}
-					controls={[
-						{
-							text: 'Add',
-							primary: true,
-							onClick: this.handleNewMealSubmit,
-						},
-						{ text: 'Cancel', onClick: this.toggleAddModal },
-					]}
+
 					state={control.add}
 				/>
 			</div>
