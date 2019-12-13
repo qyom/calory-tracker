@@ -70,6 +70,7 @@ class Meals extends Component {
 	renderMealGroupList() {
 		const { meals, member } = this.props;
 		const mealGroups = groupMealsByPeriod(meals);
+		console.log("grouped meals", mealGroups, "From meals", meals);
 
 		return (
 			<ul className={styles.MealGroupList}>

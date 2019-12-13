@@ -33,8 +33,11 @@ export default function groupMealsByPeriod(
 		} else {
 			mealGroupsObj[mealGroupKey] = [meal];
 		}
+		mealGroupsObj[mealGroupKey].sort((m1,m2) => (moment(m2.dateIntake).unix()-moment(m1.dateIntake).unix()));
 		return mealGroupsObj;
 	}, {});
 
-	return Object.values(mealGroupsObj);
+	return Object.values(mealGroupsObj).sort((mg1,mg2) => (
+		moment(mg2[0].dateIntake).unix()-moment(mg1[0].dateIntake).unix()
+	));
 }
