@@ -10,7 +10,6 @@ import classnames from 'classnames';
 import styles from './styles.module.scss';
 
 class Login extends Component {
-
 	static propTypes = {
 		isAuthenticated: PropTypes.bool.isRequired,
 	};
@@ -36,50 +35,63 @@ class Login extends Component {
 
 	allowSubmit = () => {
 		const { email, password } = this.state;
-		return email && email.length > 0 &&
-		 password && password.length > 0;
-	}
+		return email && email.length > 0 && password && password.length > 0;
+	};
 
 	render() {
+		const { fromLocation } = this.props.location.state || {};
 		if (this.props.isAuthenticated) {
-			return <Redirect to="/" />;
+			return <Redirect to={fromLocation || '/'} />;
 		}
 		const { email, password } = this.state;
 		const { isLoading, authError } = this.props;
-		const btnStyle = this.allowSubmit() ? 
-			(isLoading ? styles.activeBtn : styles.primaryBtn)
+		const btnStyle = this.allowSubmit()
+			? isLoading
+				? styles.activeBtn
+				: styles.primaryBtn
 			: styles.disabledBtn;
 
 		return (
 			<div className={styles.FormPage}>
 				<ViewHeader>
 					Log In
-					{ authError ? 
+					{authError ? (
 						<div className={styles.pageCntls}>
 							<span className={styles.pageError}>Invalid Credentials</span>
 						</div>
-						: null
-					}
+					) : null}
 				</ViewHeader>
 				<form action="" onSubmit={this.handleSubmit} className={styles.form}>
 					<div className={styles.inputGroup}>
 						<label htmlFor="email" className={styles.label}>
 							<span className={styles.labelName}> Email </span>
-							<input type="email" name="email" id="email" value={email}
-								onChange={this.handleEmailChange} className={styles.input}
+							<input
+								type="email"
+								name="email"
+								id="email"
+								value={email}
+								onChange={this.handleEmailChange}
+								className={styles.input}
 							/>
 						</label>
 					</div>
 					<div className={styles.inputGroup}>
 						<label htmlFor="password" className={styles.label}>
 							<span className={styles.labelName}>Password</span>
-							<input type="password" name="password" id="password" value={password} 
-								onChange={this.handlePasswordChange} className={styles.input}
+							<input
+								type="password"
+								name="password"
+								id="password"
+								value={password}
+								onChange={this.handlePasswordChange}
+								className={styles.input}
 							/>
 						</label>
 					</div>
-					<button className={classnames(btnStyle, styles.cntlBtn)} 
-						type="submit">
+					<button
+						className={classnames(btnStyle, styles.cntlBtn)}
+						type="submit"
+					>
 						{isLoading ? <Spinner small={true} /> : 'Sign In'}
 					</button>
 				</form>
@@ -89,6 +101,10 @@ class Login extends Component {
 }
 
 function mapStateToPros({ user }) {
-	return { isAuthenticated: !!user.data, isLoading: user.isLoading, authError: user.error};
+	return {
+		isAuthenticated: !!user.data,
+		isLoading: user.isLoading,
+		authError: user.error,
+	};
 }
 export default connect(mapStateToPros, { authUser })(Login);

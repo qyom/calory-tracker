@@ -14,7 +14,7 @@ import { fetchUser } from 'Actions';
 
 const token = localStorage.getItem('jwt');
 if (token) {
-	store.dispatch(fetchUser());
+	store.dispatch(fetchUser(token));
 }
 
 function App() {

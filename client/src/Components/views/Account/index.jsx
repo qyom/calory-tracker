@@ -117,6 +117,43 @@ class Account extends Component {
 		this.props.deleteMember({ memberId, isDeletingSelf: this.isMemberTheUser });
 	};
 
+	generateButtonGroup(isEditMode) {
+		return (
+			<div className={styles.formControls}>
+					{!isEditMode && (
+						<button
+							className={classnames(styles.primaryBtn, styles.cntlBtn)}
+							onClick={this.handleEditClick}
+						>
+							Edit
+						</button>
+					)}
+					{isEditMode && (
+						<button
+							className={classnames(styles.primaryBtn, styles.cntlBtn)}
+							type="submot"
+						>
+							Save
+						</button>
+					)}
+					{isEditMode && (
+						<button
+							className={classnames(styles.secondaryBtn, styles.cntlBtn)}
+							onClick={this.handleCancelClick}
+						>
+							Cancel
+						</button>
+					)}
+					<button
+						className={classnames(styles.secondaryBtn, styles.cntlBtn)}
+						onClick={this.toggleDeleteConfirmModal}
+					>
+						Delete
+					</button>
+				</div>
+		)
+	}
+
 	get isMemberTheUser() {
 		const { user, member } = this.props;
 		const { memberId } = member;
@@ -168,40 +205,10 @@ class Account extends Component {
 					setupFieldsDataExternalControlers={
 						this.setupFieldsDataExternalControlers
 					}
+					controlsHTML={this.generateButtonGroup(isEditMode)}
+					onSubmit={this.handleSaveClick}
 				/>
-				<div className={styles.formControls}>
-					{!isEditMode && (
-						<button
-							className={classnames(styles.primaryBtn, styles.cntlBtn)}
-							onClick={this.handleEditClick}
-						>
-							Edit
-						</button>
-					)}
-					{isEditMode && (
-						<button
-							className={classnames(styles.primaryBtn, styles.cntlBtn)}
-							onClick={this.handleSaveClick}
-						>
-							Save
-						</button>
-					)}
-					{isEditMode && (
-						<button
-							className={classnames(styles.secondaryBtn, styles.cntlBtn)}
-							onClick={this.handleCancelClick}
-						>
-							Cancel
-						</button>
-					)}
-					<button
-						className={classnames(styles.secondaryBtn, styles.cntlBtn)}
-						onClick={this.toggleDeleteConfirmModal}
-					>
-						Delete
-					</button>
-				</div>
-
+				
 				<Modal
 					isVisible={deleteUserModal}
 					title={`Are you sure you want to delete ${firstName} ${lastName}?`}

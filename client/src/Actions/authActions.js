@@ -1,14 +1,14 @@
-import axiosApi, { axiosApiPure } from 'Axios/axiosApi.js';
-import {
-	AUTH_USER,
-	UNAUTH_USER,
-	CREATE_USER,
-} from 'Constants/actionTypes';
+import axiosApi, {
+	setAuthInterceptor,
+	ejectAuthInterceptor,
+	setUnAuthInterceptor,
+	ejectUnAuthInterceptor,
+} from 'Axios/axiosApi.js';
+import { AUTH_USER, UNAUTH_USER, CREATE_USER } from 'Constants/actionTypes';
 import { normalizeMember, denormalizeMember } from 'Utils/normalizers';
 import { addMemberToState } from 'Actions';
 
 export function authUser({ email, password }) {
-	//console.log("logging in user");
 	return async function _dispatcher_(dispatch) {
 		try {
 			dispatch({ type: AUTH_USER.START });
@@ -18,10 +18,8 @@ export function authUser({ email, password }) {
 				data: { email, password },
 			});
 
-			localStorage.setItem('jwt', res.data.token);
-			const normalizedMember = normalizeMember(res.data.member);
-
-			setUser(dispatch, normalizedMember);
+			const { token, member: denormalizedUser } = res.data;
+			authUserLocally({ dispatch, token, denormalizedUser });
 		} catch (err) {
 			console.log(err);
 			dispatch({ type: AUTH_USER.ERROR, payload: err });
@@ -29,16 +27,15 @@ export function authUser({ email, password }) {
 	};
 }
 
-export function fetchUser() {
-	console.log("fetching user");
+export function fetchUser(token) {
 	return async function _dispatcher_(dispatch) {
 		try {
 			dispatch({ type: AUTH_USER.START });
-			const res = await axiosApi.get('/auth');
-
-			const normalizedMember = normalizeMember(res.data);
-
-			setUser(dispatch, normalizedMember);
+			const res = await axiosApi.get('/auth', {
+				headers: { Authorization: `Bearer ${token}` },
+			});
+			const denormalizedUser = res.data;
+			authUserLocally({ dispatch, token, denormalizedUser });
 		} catch (err) {
 			console.log(err);
 			dispatch({ type: AUTH_USER.ERROR, payload: err });
@@ -47,7 +44,6 @@ export function fetchUser() {
 }
 
 export function createUser(member = {}) {
-	// console.log('creatUser');
 	return async function _dispatcher_(dispatch) {
 		try {
 			dispatch({ type: CREATE_USER.START });
@@ -58,10 +54,8 @@ export function createUser(member = {}) {
 				data: denormalizedMember,
 			});
 
-			localStorage.setItem('jwt', res.data.token);
-			const normalizedMember = normalizeMember(res.data.member);
-
-			setUser(dispatch, normalizedMember);
+			const { token, member: denormalizedUser } = res.data;
+			authUserLocally({ dispatch, token, denormalizedUser });
 		} catch (err) {
 			// console.log(err);
 			dispatch({ type: CREATE_USER.ERROR, payload: err });
@@ -75,34 +69,38 @@ export function setUserInState(dispatch, payload) {
 		payload,
 	});
 }
-function setUser(dispatch, member) {
-	addMemberToState(dispatch, member);
-	setUserInState(dispatch, member);
+function authUserLocally({ dispatch, denormalizedUser, token }) {
+	localStorage.setItem('jwt', token);
+	setAuthInterceptor();
+	setUnAuthInterceptor(unAuthUserLocally, dispatch);
+
+	const normalizedMember = normalizeMember(denormalizedUser);
+
+	addMemberToState(dispatch, normalizedMember);
+	setUserInState(dispatch, normalizedMember);
 }
 
-// function signoutUser(dispatch) {
-//     dispatch({ type: UNAUTH_USER });
-//     localStorage.removeItem('token');
-// }
 export function unAuthUserLocally(dispatch) {
 	localStorage.removeItem('jwt');
+	ejectAuthInterceptor();
+	ejectUnAuthInterceptor();
 	dispatch({
 		type: UNAUTH_USER.FINISH,
 	});
 }
+
 export function unAuthUser() {
 	return async function _dispatcher_(dispatch) {
 		dispatch({ type: UNAUTH_USER.START });
-		// axios interceptor is too late if there is a preflight
 		const jwt = localStorage.getItem('jwt');
+
+		unAuthUserLocally(dispatch);
 		try {
-			axiosApiPure({
+			axiosApi({
 				method: 'delete',
 				url: '/auth',
 				headers: { Authorization: `Bearer ${jwt}` },
 			});
-			unAuthUserLocally(dispatch);
-			// // signoutUser(dispatch);
 		} catch (err) {
 			console.log('error deleting token', err);
 			dispatch({ type: UNAUTH_USER.ERROR, payload: err });

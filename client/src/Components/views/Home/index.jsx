@@ -13,7 +13,14 @@ function Home(props) {
 		return <Spinner />;
 	}
 	if (!isAuthenticated) {
-		return <Redirect to="/login" />;
+		return (
+			<Redirect
+				to={{
+					pathname: '/login',
+					state: { fromLocation },
+				}}
+			/>
+		);
 	}
 	return <Redirect to={fromLocation || `/meals/${user.data.memberId}`} />;
 }

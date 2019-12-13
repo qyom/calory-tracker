@@ -156,7 +156,7 @@ export default class ControlFields extends Component {
 	}
 
 	render() {
-		const { onSubmit, controls, state } = this.props;
+		const { onSubmit, controls, state, controlsHTML } = this.props;
 		return (
 			<form className={styles.ControlledFields} onSubmit={onSubmit}>
 				{this.renderFieldSets()}
@@ -168,6 +168,7 @@ export default class ControlFields extends Component {
 					</div>
 					: null
 				}
+				{ controlsHTML || null}
 			</form>
 		);
 	}
