@@ -9,6 +9,7 @@ class MembersController extends Controller
 {
     public function get()
     {
-        return response()->json(Member::all(),200);
+        $query = Member::whereIn('role_type', Member::rolesNotHigherThan(JWTAuth::user()->role_type));
+        return response()->json($query->get(),200);
     }
 }

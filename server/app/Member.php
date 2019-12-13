@@ -65,6 +65,10 @@ class Member extends Authenticatable implements JWTSubject
     public static function compareRoles($role1, $role2) {
         return self::$rolesMap[$role1] <=> self::$rolesMap[$role2];
     }
+    public static function rolesNotHigherThan($roleType) {
+        $roles = array_keys(self::$rolesMap);
+        return array_slice($roles, 0, array_search($roleType, $roles)+1);
+    }
 
     public function getActivationToken()
     {
