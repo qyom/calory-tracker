@@ -29,6 +29,7 @@ export default [
 		type: 'password',
 		label: 'Password',
 		isValueHidden: true,
+		autoComplete: "new-password"
 	},
 	{
 		name: 'confirmPassword',

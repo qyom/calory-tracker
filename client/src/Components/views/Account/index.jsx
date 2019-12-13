@@ -89,9 +89,6 @@ class Account extends Component {
 
 	handleCancelClick = event => {
 		event.preventDefault();
-
-		// const relevantMemberValues = getRelevantMemberValues(this.props.member);
-		// this.setFieldValues(relevantMemberValues, this.toggleEditMode);
 		this.setFieldValues(this.props.member, this.toggleEditMode);
 	};
 
@@ -99,8 +96,6 @@ class Account extends Component {
 		event.preventDefault();
 		const { memberId } = this.props.member;
 		const updatedMemberState = this.getFieldValues();
-		// updatedMemberState.memberId = memberId;
-		// const relevantMemberValues = getRelevantMemberValues(updatedMemberState);
 
 		this.props.updateMember({
 			member: { ...updatedMemberState, memberId },

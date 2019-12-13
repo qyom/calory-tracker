@@ -6,6 +6,7 @@ import CustomNavLink from 'Components/CustomNavLink';
 import getIfAllowed, {
 	OPERATION_TYPES,
 	RESOURCE_TYPES,
+	ROLE_TYPES,
 } from 'Utils/getIfAllowed';
 import styles from './styles.module.scss';
 import { unAuthUser } from 'Actions';
@@ -52,6 +53,10 @@ class TopBar extends Component {
 					)}
 				</div>
 				<div className={styles.controls}>
+					<div className={classnames(styles.controlsItem, styles.greeting)}>
+						{user.firstName}
+						{user.roleType!==ROLE_TYPES.REGULAR ? ` (${user.roleType.toLowerCase()})` : null}!
+					</div>
 					<CustomNavLink
 						to={`/meals/${memberId}`}
 						className={styles.controlsItem}

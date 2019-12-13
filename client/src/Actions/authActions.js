@@ -38,7 +38,7 @@ export function fetchUser() {
 
 			const normalizedMember = normalizeMember(res.data);
 
-			setUserInState(dispatch, normalizedMember);
+			setUser(dispatch, normalizedMember);
 		} catch (err) {
 			console.log(err);
 			dispatch({ type: AUTH_USER.ERROR, payload: err });
