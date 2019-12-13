@@ -333,9 +333,7 @@ class MemberTest extends TestCase
             'put',
             '/api/member/'.($currentMember->member_id + 100),
             $this->validPayload
-        );
-        //$response->dump();
-        $response->assertStatus(404);
+        )->assertStatus(404);
         // Attempt to update an existing member other than self should return 403
         $memberToUpdate = factory(Member::class)->create([
             'email' => 'toptal2@test.com',
@@ -347,19 +345,21 @@ class MemberTest extends TestCase
             '/api/member/'.$memberToUpdate->member_id,
             $this->validPayload
         )->assertStatus(403);
-
         // Change to Manager
         $currentMember->role_type = Member::TYPE_MANAGER;
         $currentMember->save();
         // Refresh token
         $token = $this->login($currentMember);
+        $this->withTokenHeader($token)->put(
+            '/api/member/'.$memberToUpdate->member_id,
+            ['role_type'=>Member::TYPE_ADMIN]+$this->validPayload
+        )->assertStatus(400);
         // Retry even with an old member token
         $response = $this->withTokenHeader($token)->json(
             'put',
             '/api/member/'.$memberToUpdate->member_id,
             ['first_name'=>'changedByManager', 'dump'=>1]+$this->validPayload
-        );
-        $response->assertStatus(200);
+        )->assertStatus(200);
         $memberToUpdate->refresh();
         $this->assertEquals('changedByManager', $memberToUpdate->first_name);
 

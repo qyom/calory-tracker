@@ -77,12 +77,14 @@ class MemberController extends Controller
         if (sizeof($request->all()) == 0) {
             return response()->json($meal, 200);
         }
+        $allowedRoles = $this->getAllowedRolesByCreator($memberMe);
         $validator = Validator::make($request->all(), [
             'first_name' => '|string|max:255',
             'last_name' => '|string|max:255',
             'email' => '|string|email|max:255|unique:members,email,'.$member->member_id.',member_id',
             'password' => '|string|min:6|confirmed',
             'max_calories_per_day' => '|integer|min:0|max:100000',
+            'role_type' => '|string|in:'.implode(',',$allowedRoles),
         ]);
         if($validator->fails()){
             return response()->json($validator->errors(), 400);
@@ -101,6 +103,9 @@ class MemberController extends Controller
         }
         if($request->has('max_calories_per_day')) {
             $fill['max_calories_per_day'] = $request->get('max_calories_per_day');
+        }
+        if($request->has('role_type')) {
+            $fill['role_type'] = $request->get('role_type');
         }
         $member->fill($fill);
         $member->save();
