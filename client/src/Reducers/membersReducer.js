@@ -5,7 +5,7 @@ import {
 	SET_MEMBER,
 } from 'Constants/actionTypes';
 
-export default function mealsReducer(state = [], action) {
+export default function membersReducer(state = [], action) {
 	switch (action.type) {
 		case SET_MEMBERS: {
 			const members = action.payload;

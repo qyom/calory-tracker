@@ -8,7 +8,7 @@ import { normalizeMember, denormalizeMember } from 'Utils/normalizers';
 import { addMemberToState } from 'Actions';
 
 export function authUser({ email, password }) {
-	// console.log("authUser");
+	//console.log("logging in user");
 	return async function _dispatcher_(dispatch) {
 		try {
 			dispatch({ type: AUTH_USER.START });
@@ -30,7 +30,7 @@ export function authUser({ email, password }) {
 }
 
 export function fetchUser() {
-	// console.log("authUser");
+	console.log("fetching user");
 	return async function _dispatcher_(dispatch) {
 		try {
 			dispatch({ type: AUTH_USER.START });
@@ -38,7 +38,7 @@ export function fetchUser() {
 
 			const normalizedMember = normalizeMember(res.data);
 
-			setUser(dispatch, normalizedMember);
+			setUserInState(dispatch, normalizedMember);
 		} catch (err) {
 			console.log(err);
 			dispatch({ type: AUTH_USER.ERROR, payload: err });

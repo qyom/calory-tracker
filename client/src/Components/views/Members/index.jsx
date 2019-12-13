@@ -155,5 +155,5 @@ function mapStateToProps(state) {
 	return { members, user: user.data };
 }
 export default connect(mapStateToProps, { fetchMembers, createMember })(
-	Members,
+	Members
 );
