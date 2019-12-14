@@ -1,6 +1,6 @@
+static
 asset-manifest.json
 index.html
 manifest.json
-precache-manifest*
+precache-*
 service-worker.js
-static/
