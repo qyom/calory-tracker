@@ -104,7 +104,7 @@ class Meal extends Component {
 								clearIcon={null}
 							/>
 						) : (
-							moment(dateIntake).format('h:MM a')
+							moment(dateIntake).format('HH:mm')
 						)}
 					</li>
 					<li className={classnames(cellStyle, styles.name)}>
