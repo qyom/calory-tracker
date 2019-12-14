@@ -11,7 +11,11 @@ export const SET_USER = 'SET_USER';
 
 export const SET_MEMBER = 'SET_MEMBER';
 export const SET_MEMBERS = 'SET_MEMBERS';
-export const ADD_MEMBER = 'ADD_MEMBER';
+export const ADD_MEMBER = Object.freeze({
+	START: 'ADD_MEMBER_START',
+	FINISH: 'ADD_MEMBER_FINISH',
+	ERROR: 'ADD_MEMBER_ERROR'
+});
 export const DELETE_MEMBER = 'DELETE_MEMBER';
 
 export const AUTH_USER = Object.freeze({

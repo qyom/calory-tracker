@@ -35,9 +35,11 @@ export function fetchUser(token) {
 				headers: { Authorization: `Bearer ${token}` },
 			});
 			const denormalizedUser = res.data;
+			console.log("Authing locally");
 			authUserLocally({ dispatch, token, denormalizedUser });
+			console.log("after authing locally");
 		} catch (err) {
-			console.log(err);
+			console.log(err.response);
 			dispatch({ type: AUTH_USER.ERROR, payload: err });
 		}
 	};
@@ -58,7 +60,7 @@ export function createUser(member = {}) {
 			authUserLocally({ dispatch, token, denormalizedUser });
 		} catch (err) {
 			// console.log(err);
-			dispatch({ type: CREATE_USER.ERROR, payload: err });
+			dispatch({ type: CREATE_USER.ERROR, payload: err.response });
 		}
 	};
 }
@@ -75,9 +77,11 @@ function authUserLocally({ dispatch, denormalizedUser, token }) {
 	setUnAuthInterceptor(unAuthUserLocally, dispatch);
 
 	const normalizedMember = normalizeMember(denormalizedUser);
-
+console.log("ADding member to state inside authUserLocally");
 	addMemberToState(dispatch, normalizedMember);
+	console.log("Done ADding member to state inside authUserLocally");
 	setUserInState(dispatch, normalizedMember);
+	console.log("Done Setting member to state inside authUserLocally");
 }
 
 export function unAuthUserLocally(dispatch) {

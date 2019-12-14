@@ -10,6 +10,7 @@ import Spinner from 'Components/Spinner';
 import classnames from 'classnames';
 import { ROLE_TYPES } from 'Utils/getIfAllowed';
 import styles from './styles.module.scss';
+import ErrorBox from 'Components/ErrorBox';
 
 class Signup extends Component {
 	static propTypes = {
@@ -24,9 +25,9 @@ class Signup extends Component {
 
 	handleSubmit = event => {
 		event.preventDefault();
-		const updatedMemberState = this.getFieldValues();
-		updatedMemberState.roleType = ROLE_TYPES.REGULAR;
-		this.props.createUser(updatedMemberState);
+		const memberState = this.getFieldValues();
+		memberState.roleType = ROLE_TYPES.REGULAR;
+		this.props.createUser(memberState);
 	};
 
 	render() {
@@ -38,20 +39,20 @@ class Signup extends Component {
 			<div className={styles.FormPage}>
 				<ViewHeader>
 					Sign Up
-					{ authError ? 
-						<div className={styles.pageCntls}>
-							<span className={styles.pageError}>User Exists</span>
-						</div>
-						: null
-					}
+					<ErrorBox errors={authError} />
 				</ViewHeader>
 				<ControlledFields
 					fieldConfigs={fieldConfigs}
 					setupFieldsDataExternalControlers={
 						this.setupFieldsDataExternalControlers
 					}
+					controls={[
+						{ text: 'Submit', primary: true, type: 'submit'},
+					]}
+					state={{processing: isLoading}}
+					onSubmit={this.handleSubmit}
 				/>
-				<div className={styles.pageControls}>
+				{/* <div className={styles.pageControls}>
 					<button
 						className={classnames(
 							isLoading ? styles.activeBtn : styles.primaryBtn,
@@ -61,7 +62,7 @@ class Signup extends Component {
 					>
 						{isLoading ? <Spinner small={true} /> : 'Submit'}
 					</button>
-				</div>
+				</div> */}
 			</div>
 		);
 	}

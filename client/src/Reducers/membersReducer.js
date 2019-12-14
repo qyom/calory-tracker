@@ -1,3 +1,4 @@
+import update from 'immutability-helper';
 import {
 	SET_MEMBERS,
 	ADD_MEMBER,
@@ -5,38 +6,45 @@ import {
 	SET_MEMBER,
 } from 'Constants/actionTypes';
 
-export default function membersReducer(state = [], action) {
+const initialState = {data:[], control:{save:{processing:false, error:{}}}};
+
+export default function membersReducer(state = initialState, action) {
 	switch (action.type) {
 		case SET_MEMBERS: {
 			const members = action.payload;
-			// console.log("data: ", data);
-			return members;
+			return {...state, data:members};
 		}
-		case ADD_MEMBER: {
+		case ADD_MEMBER.START: {
+			return update(state, {control: {save: {processing: {$set: true}}}});
+		}
+		case ADD_MEMBER.FINISH: {
 			const member = action.payload;
-			// console.log("data: ", data);
-			return [...state, member];
+			return update(state, {
+				data: {$push: [member]},
+				control: {save: {processing: {$set: false}, error:{$set: {}}}}
+			});
+		}
+		case ADD_MEMBER.ERROR: {
+			//console.log("error payload", action.payload);
+			return update(state, {control: {save: {processing: {$set: false}, error: {$set: action.payload.error}}}});
 		}
 		case SET_MEMBER: {
 			const member = action.payload;
-			// console.log("data: ", data);
-			const index = state.findIndex(
-				currentMember => currentMember.memberId === member.memberId,
-			);
-			const newState = [...state];
-			newState.splice(index, 1, member);
-			return newState;
+			const updatedMembers = state.data.map(currMember => {
+				return currMember.memberId === member.memberId ? member : currMember;
+			});
+			return update(state, {
+				data: {$set: updatedMembers}
+			});
 		}
 		case DELETE_MEMBER: {
 			const { memberId } = action.payload;
-			// console.log("data: ", data);
-			const index = state.findIndex(currentMember => {
-				const isMatch = currentMember.memberId === memberId;
-				return isMatch;
+			const updatedMembers = state.data.filter(currMember => {
+				return currMember.memberId !== memberId;
 			});
-			const newState = [...state];
-			newState.splice(index, 1);
-			return newState;
+			return update(state, {
+				data: {$set: updatedMembers}
+			});
 		}
 
 		default:

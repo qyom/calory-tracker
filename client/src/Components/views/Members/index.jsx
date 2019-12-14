@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import _ from 'lodash';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
@@ -31,6 +32,7 @@ class Members extends Component {
 		super(props);
 		this.state = {
 			isModalVisible: false,
+			memberSaved: false
 		};
 	}
 
@@ -39,8 +41,21 @@ class Members extends Component {
 		user: memberPropTypes,
 	};
 
-	componentDidMount() {
+	componentDidMount(prevProps) {
 		this.props.fetchMembers();
+	}
+	componentDidUpdate(prevProps){
+		// Handle the modal
+		const { processing, error } = this.props.control.save;
+		const memberSaved = this.state.isModalVisible &&
+			prevProps.control.save.processing &&
+			!processing &&
+			_.isEmpty(error.data);
+			console.log("member is saved", memberSaved);
+		if (memberSaved) {
+			this.toggleAddModal();
+			this.setState({memberSaved});
+		}
 	}
 
 	handleMemberClick = memberId => {
@@ -79,10 +94,10 @@ class Members extends Component {
 		this.setFieldValues = setFieldValues;
 	};
 
-	handleAddMemberClick = () => {
+	handleAddMemberClick = (e) => {
+		e.preventDefault();
 		let updatedMember = this.getFieldValues();
 		this.props.createMember(updatedMember);
-		this.toggleAddModal();
 	};
 
 	toggleAddModal = () => {
@@ -98,13 +113,21 @@ class Members extends Component {
 			operation: OPERATION_TYPES.READ,
 		});
 	}
+	renderMessages()
+	{
+		return (
+			<div>
+			{this.state.memberSaved ? <div className={styles.successMsg}> Member was saved!</div> : null}
+			</div>
+		);
+	}
 
 	render() {
 		if (!this.isThisPageAllowed) {
 			return <Redirect to="/" />;
 		}
-
 		const { isModalVisible } = this.state;
+		
 		return (
 			<div className={styles.Members}>
 				<ViewHeader>
@@ -117,6 +140,7 @@ class Members extends Component {
 							Add User
 						</button>
 					</div>
+					{this.renderMessages()}
 				</ViewHeader>
 				<table className={styles.table}>
 					<thead className={styles.thead}>
@@ -142,10 +166,11 @@ class Members extends Component {
 								{ text: 'Add', primary: true, type: 'submit' },
 								{ text: 'Cancel', onClick: this.toggleAddModal },
 							]}
+							state={this.props.control.save}
 							onSubmit={this.handleAddMemberClick}
 						/>
 					}
-					
+					state={this.props.control.save}				
 				/>
 			</div>
 		);
@@ -154,7 +179,7 @@ class Members extends Component {
 
 function mapStateToProps(state) {
 	const { members, user } = state;
-	return { members, user: user.data };
+	return { members:members.data, control:members.control, user: user.data };
 }
 export default connect(mapStateToProps, { fetchMembers, createMember })(
 	Members

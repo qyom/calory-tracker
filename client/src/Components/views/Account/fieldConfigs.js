@@ -35,8 +35,8 @@ export default [
 		type: 'password',
 		label: 'Password',
 		isValueHidden: true,
-		required: true,
-		minlength: 6,
+		required: false,
+		minLength: 6,
 		autoComplete: "new-password"
 	},
 	{
@@ -44,7 +44,7 @@ export default [
 		type: 'password',
 		label: 'Confirm password',
 		isValueHidden: true,
-		required: true,
-		minlength: 6
+		required: false,
+		minLength: 6
 	},
 ];

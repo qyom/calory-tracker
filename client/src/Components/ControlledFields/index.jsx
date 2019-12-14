@@ -161,10 +161,8 @@ export default class ControlFields extends Component {
 			<form className={styles.ControlledFields} onSubmit={onSubmit}>
 				{this.renderFieldSets()}
 				{controls ?
-					<div className={styles.controlsGroup}>
-						<ButtonGroup controls={controls}
-								 processing={state && state.processing }
-						 	/>
+					<div className={styles.formControls}>
+						<ButtonGroup controls={controls} processing={state && state.processing } />
 					</div>
 					: null
 				}

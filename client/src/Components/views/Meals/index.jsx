@@ -270,7 +270,7 @@ function mapStateToProps(state, ownProps) {
 	const { meals, members, user } = state;
 
 	const { memberId: routeMemberId } = ownProps.match.params;
-	const member = members.find(member => member.memberId === routeMemberId);
+	const member = members.data.find(member => member.memberId === routeMemberId);
 	return {
 		meals: meals.data[routeMemberId],
 		control: meals.control,

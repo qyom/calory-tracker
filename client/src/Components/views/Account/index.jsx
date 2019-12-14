@@ -225,7 +225,7 @@ class Account extends Component {
 function mapStateToProps(state, ownProps) {
 	const { user, members } = state;
 	const { memberId: routeMemberId } = ownProps.match.params;
-	const member = members.find(member => member.memberId === routeMemberId);
+	const member = members.data.find(member => member.memberId === routeMemberId);
 	return { member, user: user.data };
 }
 export default connect(mapStateToProps, {

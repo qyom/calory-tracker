@@ -87,7 +87,7 @@ export function deleteMember({ memberId, isDeletingSelf }) {
 }
 export function addMemberToState(dispatch, payload) {
 	dispatch({
-		type: ADD_MEMBER,
+		type: ADD_MEMBER.FINISH,
 		payload,
 	});
 }
@@ -95,17 +95,21 @@ export function createMember(member = {}) {
 	console.log('creating member: ');
 	return async function _dispatcher_(dispatch) {
 		try {
+			dispatch({ type: ADD_MEMBER.START });
 			const denormalizedMember = denormalizeMember(member);
 			const res = await axiosApi({
 				method: 'post',
 				url: `/member`,
 				data: denormalizedMember,
 			});
-
-			const normalizedMember = normalizeMember(res.data);
+			const normalizedMember = normalizeMember(res.data.member);
 			addMemberToState(dispatch, normalizedMember);
 		} catch (err) {
 			console.log('problem while fetching data: ', err);
+			dispatch({
+				type: ADD_MEMBER.ERROR,
+				payload: { member, error: err.response},
+			});
 		}
 	};
 }
