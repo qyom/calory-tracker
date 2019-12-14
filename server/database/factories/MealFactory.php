@@ -19,9 +19,9 @@ use Illuminate\Support\Str;
 
 $factory->define(Meal::class, function (Faker $faker) {
     return [
-        'name' => $faker->name,
-        'calories' => rand(0, 10000),
-        'date_intake' => "2019-11-29 13:13:13"
+        'name' => $faker->word,
+        'calories' => rand(0, 666),
+        'date_intake' => $faker->dateTimeBetween('-3 days', 'now')        
         //'member_id' => $member->member_id,
     ];
 });

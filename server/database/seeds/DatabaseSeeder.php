@@ -11,6 +11,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $this->call(UsersTableSeeder::class);
+        factory(App\Member::class, 33)->create()
+            ->each(function ($member) {
+                $member->meals()->saveMany(factory(App\Meal::class, 22)->make(['member_id'=>$member->member_id]));
+            });
     }
 }
