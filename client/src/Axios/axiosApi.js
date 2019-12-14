@@ -26,9 +26,7 @@ export function setAuthInterceptor() {
 	);
 }
 export function ejectAuthInterceptor() {
-	if (authTokenInterceptor) {
-		axiosApi.interceptors.request.eject(authTokenInterceptor);
-	}
+	axiosApi.interceptors.request.eject(authTokenInterceptor);
 }
 export function setUnAuthInterceptor(unAuthUserLocally, dispatch) {
 	unAuthTokenInterceptor = axiosApi.interceptors.response.use(

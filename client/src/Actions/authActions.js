@@ -77,11 +77,8 @@ function authUserLocally({ dispatch, denormalizedUser, token }) {
 	setUnAuthInterceptor(unAuthUserLocally, dispatch);
 
 	const normalizedMember = normalizeMember(denormalizedUser);
-console.log("ADding member to state inside authUserLocally");
 	addMemberToState(dispatch, normalizedMember);
-	console.log("Done ADding member to state inside authUserLocally");
 	setUserInState(dispatch, normalizedMember);
-	console.log("Done Setting member to state inside authUserLocally");
 }
 
 export function unAuthUserLocally(dispatch) {
@@ -97,7 +94,6 @@ export function unAuthUser() {
 	return async function _dispatcher_(dispatch) {
 		dispatch({ type: UNAUTH_USER.START });
 		const jwt = localStorage.getItem('jwt');
-
 		unAuthUserLocally(dispatch);
 		try {
 			axiosApi({
@@ -106,7 +102,6 @@ export function unAuthUser() {
 				headers: { Authorization: `Bearer ${jwt}` },
 			});
 		} catch (err) {
-			console.log('error deleting token', err);
 			dispatch({ type: UNAUTH_USER.ERROR, payload: err });
 		}
 	};
